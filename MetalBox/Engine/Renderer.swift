@@ -112,7 +112,6 @@ class Renderer: NSObject, MTKViewDelegate {
 		pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormat.bgra8Unorm_srgb;
 		pipelineDescriptor.vertexFunction = defaultLibrary?.makeFunction(name: "triangleVertexShader")
 		pipelineDescriptor.fragmentFunction = defaultLibrary?.makeFunction(name: "trianglePixelShader")
-		pipelineDescriptor.fragmentFunction = defaultLibrary?.makeFunction(name: "trianglePixelShader")
 		pipelineDescriptor.vertexDescriptor = triangleLayout;
 		
 		let renderPipelineState = try! device.makeRenderPipelineState(descriptor: pipelineDescriptor)
