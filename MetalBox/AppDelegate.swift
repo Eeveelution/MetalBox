@@ -7,9 +7,7 @@
 
 import Cocoa
 
-@main
-class AppDelegate: NSObject, NSApplicationDelegate {
-    
+@main class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet var window: NSWindow!
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -23,5 +21,4 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return true
     }
-    
 }

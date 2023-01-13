@@ -10,7 +10,6 @@ import MetalKit
 
 // Our macOS specific view controller
 class GameViewController: NSViewController {
-
     var renderer: Renderer!
     var mtkView: MTKView!
 
