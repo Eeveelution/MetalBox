@@ -21,41 +21,36 @@ class Renderer: NSObject, MTKViewDelegate {
     let commandQueue: MTLCommandQueue
 	
 	var depthStencilState: MTLDepthStencilState
-	var mainRenderTarget: MTLTexture?
+	
+	var drawDeltaSnapshot: DispatchTime
+	var altDrawDeltaSnapshot: DispatchTime
+	var updateDeltaSnapshot: DispatchTime
+	var altUpdateDeltaSnapshot: DispatchTime
 	
 	//Async Structures
-	var renderTargetSemaphore: DispatchSemaphore
-	var taskQueue: DispatchQueue
+	var drawMethodSemaphore: DispatchSemaphore
+	var taskQueue: TaskQueue
 	
-	//Triangle Related
-	var trianglePipeline: MTLRenderPipelineState?
-	var planeMesh: MTKMesh?
-	var colorBuffer: [SIMD4<Float16>]?
-	var vertexBuffer: [SIMD3<Float>]?
-	var colorBufferPointer: UnsafeRawPointer?
-	var vertexBufferPointer: UnsafeRawPointer?
+	var updateThread: Thread?
+	var altUpdateThread: Thread?
+	var altDrawThread: Thread?
+	
+	var currentWindowSize: CGSize
+	
+	var currentScene: Scene
+	var applicationRunning: Bool
 
     init?(metalKitView: MTKView) {
 		self.view = metalKitView;
         self.device = metalKitView.device!
         self.commandQueue = self.device.makeCommandQueue()!
 		
+		self.applicationRunning = true
+		
 		//Configure Color and Depth Buffer
-		//metalKitView.depthStencilPixelFormat = MTLPixelFormat.depth32Float_stencil8;
+		metalKitView.depthStencilPixelFormat = MTLPixelFormat.depth32Float_stencil8;
 		metalKitView.colorPixelFormat = MTLPixelFormat.bgra8Unorm_srgb;
-		
-		//Configure sample count
-		var sampleCount: Int = 1;
-		
-		//Check which is supported
-		//for i in 4...1 {
-		//	if self.device.supportsTextureSampleCount(i) {
-		//		sampleCount = i;
-		//		break;
-		//	}
-		//}
-		
-		metalKitView.sampleCount = sampleCount;
+		metalKitView.sampleCount = 1;
 		
 		let depthStencilDesc = MTLDepthStencilDescriptor();
 		
@@ -64,119 +59,93 @@ class Renderer: NSObject, MTKViewDelegate {
 		
 		self.depthStencilState = device.makeDepthStencilState(descriptor: depthStencilDesc)!
 		
-		self.renderTargetSemaphore = DispatchSemaphore(value: 0);
-		self.taskQueue = DispatchQueue(label: "async render task queue")
+		self.drawMethodSemaphore = DispatchSemaphore(value: 1);
+		self.taskQueue = TaskQueue()
+		
+		self.drawDeltaSnapshot = DispatchTime.now()
+		self.updateDeltaSnapshot = DispatchTime.now()
+		self.altDrawDeltaSnapshot = DispatchTime.now()
+		self.altUpdateDeltaSnapshot = DispatchTime.now()
+		
+		self.currentWindowSize = view.drawableSize
+		
+		self.currentScene = MainGameScene()
 
+		self.drawCount = 0
+		self.altDrawCount = 0
+		
         super.init()
 		
-		self.recreateAndResizeRenderTarget(size: metalKitView.drawableSize)
-		self.createTrianglePipeline()
+		self.updateThread = Thread(block: self.update)
+		self.altUpdateThread = Thread(block: self.altUpdate)
+		self.altDrawThread = Thread(block: self.altDraw)
 		
-		self.colorBuffer = []
-		self.vertexBuffer = []
-		
-		self.colorBuffer!.append(SIMD4<Float16>(1.0, 0.0, 0.0, 1.0))
-		self.colorBuffer!.append(SIMD4<Float16>(0.0, 1.0, 0.0, 1.0))
-		self.colorBuffer!.append(SIMD4<Float16>(0.0, 0.0, 1.0, 1.0))
-		
-		self.vertexBuffer!.append(SIMD3<Float>(0.0, 0.0, 0.0))
-		self.vertexBuffer!.append(SIMD3<Float>(1.0, 0.0, 0.0))
-		self.vertexBuffer!.append(SIMD3<Float>(0.5, 1.0, 0.0))
-		
-		self.colorBufferPointer = UnsafeRawPointer(self.colorBuffer)
-		self.vertexBufferPointer = UnsafeRawPointer(self.vertexBuffer)
+		self.updateThread?.start()
+		self.altUpdateThread?.start()
+		self.altDrawThread?.start()
     }
 	
-	func recreateAndResizeRenderTarget(size: CGSize) {
-		let textureDescriptor = MTLTextureDescriptor();
-		
-		textureDescriptor.width = Int(size.width);
-		textureDescriptor.height = Int(size.height);
-		textureDescriptor.pixelFormat = MTLPixelFormat.bgra8Unorm_srgb;
-		textureDescriptor.usage = MTLTextureUsage( rawValue: (
-			MTLTextureUsage.renderTarget.rawValue |
-			MTLTextureUsage.shaderRead.rawValue
-		));
-		
-		self.mainRenderTarget = device.makeTexture(descriptor: textureDescriptor)!
-	}
-	
-	func createTrianglePipeline() {
-		let defaultLibrary = device.makeDefaultLibrary()
-		let pipelineDescriptor = MTLRenderPipelineDescriptor()
-		
-		pipelineDescriptor.label = "Triangle Pipeline"
-		
-		let triangleLayout = self.createBufferLayout()
-		
-		pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormat.bgra8Unorm_srgb;
-		pipelineDescriptor.vertexFunction = defaultLibrary?.makeFunction(name: "triangleVertexShader")
-		pipelineDescriptor.fragmentFunction = defaultLibrary?.makeFunction(name: "trianglePixelShader")
-		pipelineDescriptor.vertexDescriptor = triangleLayout;
-		
-		let renderPipelineState = try! device.makeRenderPipelineState(descriptor: pipelineDescriptor)
-		
-		self.trianglePipeline = renderPipelineState
-	}
-	
-	func createBufferLayout() -> MTLVertexDescriptor {
-		//Input layout
-		let vertexDescriptor = MTLVertexDescriptor()
-		
-		vertexDescriptor.attributes[0].format = MTLVertexFormat.float3;
-		vertexDescriptor.attributes[0].offset = 0;
-		vertexDescriptor.attributes[0].bufferIndex = 0;
-		
-		vertexDescriptor.attributes[1].format = MTLVertexFormat.half4;
-		vertexDescriptor.attributes[1].offset = 0;
-		vertexDescriptor.attributes[1].bufferIndex = 1;
-		
-		vertexDescriptor.layouts[0].stride = MemoryLayout<SIMD3<Float>>.stride;
-		vertexDescriptor.layouts[0].stepRate = 1;
-		vertexDescriptor.layouts[0].stepFunction = MTLVertexStepFunction.perVertex;
-		
-		vertexDescriptor.layouts[1].stride = 8;
-		vertexDescriptor.layouts[1].stepRate = 1;
-		vertexDescriptor.layouts[1].stepFunction = MTLVertexStepFunction.perVertex;
-		
-		return vertexDescriptor;
-	}
+	var drawCount: Int
+	var altDrawCount: Int
 
     func draw(in view: MTKView) {
-        //let renderPassDescriptor = MTLRenderPassDescriptor()
-		//
-		//renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadAction.clear;
-		//renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0)
-		//renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreAction.store;
-		//renderPassDescriptor.colorAttachments[0].texture = self.mainRenderTarget
+		//Get delta time
+		let deltaTimeSnapshotNow = DispatchTime.now()
+		let deltaTime = Float(deltaTimeSnapshotNow.uptimeNanoseconds - self.drawDeltaSnapshot.uptimeNanoseconds) / 1000000000.0
+		self.drawDeltaSnapshot = deltaTimeSnapshotNow
 		
-		if let commandBuffer = self.commandQueue.makeCommandBuffer() {
-			if let renderPassDesc = view.currentRenderPassDescriptor {
-				if let renderPassEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDesc) {
-					renderPassEncoder.label = "Triangle Render Pass"
-					
-					renderPassEncoder.setCullMode(MTLCullMode.back)
-					renderPassEncoder.setFrontFacing(MTLWinding.counterClockwise)
-					renderPassEncoder.setRenderPipelineState(self.trianglePipeline!)
-					
-					renderPassEncoder.setVertexBytes(self.vertexBufferPointer!, length: MemoryLayout<SIMD3<Float>>.size * 3, index: 0)
-					renderPassEncoder.setVertexBytes(self.colorBufferPointer!, length: MemoryLayout<SIMD4<Float16>>.size * 3, index: 1)
-					
-					renderPassEncoder.drawPrimitives(type: MTLPrimitiveType.triangle, vertexStart: 0, vertexCount: 3)
-					
-					renderPassEncoder.endEncoding()
-					
-					if let drawable = view.currentDrawable {
-						commandBuffer.present(drawable)
-					}
-				}
+		self.currentScene.render(deltaTime: deltaTime)
+		drawCount += 1
+		
+		self.drawMethodSemaphore.signal()
+    }
+	
+	func altDraw() {
+		while self.applicationRunning {
+			//Get delta time
+			let deltaTimeSnapshotNow = DispatchTime.now()
+			let deltaTime = Float(deltaTimeSnapshotNow.uptimeNanoseconds - self.altDrawDeltaSnapshot.uptimeNanoseconds) / 1000000000.0
+			self.altDrawDeltaSnapshot = deltaTimeSnapshotNow
+			
+			self.currentScene.render(deltaTime: deltaTime)
+			
+			altDrawCount += 1
+			
+			self.drawMethodSemaphore.wait()
+		}
+	}
+	
+	func update() {
+		while self.applicationRunning {
+			let deltaTimeSnapshotNow = DispatchTime.now()
+			let deltaTime = Float(deltaTimeSnapshotNow.uptimeNanoseconds - self.updateDeltaSnapshot.uptimeNanoseconds) / 1000000000.0
+			
+			self.currentScene.update(deltaTime: deltaTime)
+			
+			self.updateDeltaSnapshot = deltaTimeSnapshotNow
+		}
+	}
+	
+	func altUpdate() {
+		while self.applicationRunning {
+			while self.taskQueue.hasWork() {
+				let item = self.taskQueue.pop()
+				item!()
 			}
 			
-			commandBuffer.commit()
+			let deltaTimeSnapshotNow = DispatchTime.now()
+			let deltaTime = Float(deltaTimeSnapshotNow.uptimeNanoseconds - self.altUpdateDeltaSnapshot.uptimeNanoseconds) / 1000000000.0
+			
+			self.altUpdateDeltaSnapshot = deltaTimeSnapshotNow
+			
+			self.currentScene.altUpdate(deltaTime: deltaTime)
 		}
-    }
+	}
 
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         /// Respond to drawable size or orientation changes here
+		self.currentWindowSize = size
+		
+		print(size)
     }
 }
