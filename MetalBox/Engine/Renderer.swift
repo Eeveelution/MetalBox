@@ -20,35 +20,35 @@ class Renderer: NSObject, MTKViewDelegate {
 	let view: MTKView
     let commandQueue: MTLCommandQueue
 	
+	//Resources
+	var defaultLibrary: MTLLibrary?
+	
 	var depthStencilState: MTLDepthStencilState
 	
 	var drawDeltaSnapshot: DispatchTime
-	var altDrawDeltaSnapshot: DispatchTime
 	var updateDeltaSnapshot: DispatchTime
-	var altUpdateDeltaSnapshot: DispatchTime
 	
 	//Async Structures
-	var drawMethodSemaphore: DispatchSemaphore
 	var taskQueue: TaskQueue
 	
 	var updateThread: Thread?
-	var altUpdateThread: Thread?
 	var altDrawThread: Thread?
 	
 	var currentWindowSize: CGSize
 	
-	var currentScene: Scene
+	var currentScene: Scene?
 	var applicationRunning: Bool
 
     init?(metalKitView: MTKView) {
 		self.view = metalKitView;
         self.device = metalKitView.device!
         self.commandQueue = self.device.makeCommandQueue()!
+		self.defaultLibrary = self.device.makeDefaultLibrary()
 		
 		self.applicationRunning = true
 		
 		//Configure Color and Depth Buffer
-		metalKitView.depthStencilPixelFormat = MTLPixelFormat.depth32Float_stencil8;
+		metalKitView.depthStencilPixelFormat = MTLPixelFormat.depth32Float;
 		metalKitView.colorPixelFormat = MTLPixelFormat.bgra8Unorm_srgb;
 		metalKitView.sampleCount = 1;
 		
@@ -59,30 +59,23 @@ class Renderer: NSObject, MTKViewDelegate {
 		
 		self.depthStencilState = device.makeDepthStencilState(descriptor: depthStencilDesc)!
 		
-		self.drawMethodSemaphore = DispatchSemaphore(value: 1);
 		self.taskQueue = TaskQueue()
 		
 		self.drawDeltaSnapshot = DispatchTime.now()
 		self.updateDeltaSnapshot = DispatchTime.now()
-		self.altDrawDeltaSnapshot = DispatchTime.now()
-		self.altUpdateDeltaSnapshot = DispatchTime.now()
 		
 		self.currentWindowSize = view.drawableSize
-		
-		self.currentScene = MainGameScene()
 
 		self.drawCount = 0
 		self.altDrawCount = 0
 		
         super.init()
 		
-		self.updateThread = Thread(block: self.update)
-		self.altUpdateThread = Thread(block: self.altUpdate)
-		self.altDrawThread = Thread(block: self.altDraw)
+		self.currentScene = MainGameScene()
+		self.currentScene!.initialize(renderer: self)
 		
+		self.updateThread = Thread(block: self.update)
 		self.updateThread?.start()
-		self.altUpdateThread?.start()
-		self.altDrawThread?.start()
     }
 	
 	var drawCount: Int
@@ -94,39 +87,11 @@ class Renderer: NSObject, MTKViewDelegate {
 		let deltaTime = Float(deltaTimeSnapshotNow.uptimeNanoseconds - self.drawDeltaSnapshot.uptimeNanoseconds) / 1000000000.0
 		self.drawDeltaSnapshot = deltaTimeSnapshotNow
 		
-		self.currentScene.render(deltaTime: deltaTime)
+		self.currentScene!.render(in: view, deltaTime: deltaTime)
 		drawCount += 1
-		
-		self.drawMethodSemaphore.signal()
     }
 	
-	func altDraw() {
-		while self.applicationRunning {
-			//Get delta time
-			let deltaTimeSnapshotNow = DispatchTime.now()
-			let deltaTime = Float(deltaTimeSnapshotNow.uptimeNanoseconds - self.altDrawDeltaSnapshot.uptimeNanoseconds) / 1000000000.0
-			self.altDrawDeltaSnapshot = deltaTimeSnapshotNow
-			
-			self.currentScene.render(deltaTime: deltaTime)
-			
-			altDrawCount += 1
-			
-			self.drawMethodSemaphore.wait()
-		}
-	}
-	
 	func update() {
-		while self.applicationRunning {
-			let deltaTimeSnapshotNow = DispatchTime.now()
-			let deltaTime = Float(deltaTimeSnapshotNow.uptimeNanoseconds - self.updateDeltaSnapshot.uptimeNanoseconds) / 1000000000.0
-			
-			self.currentScene.update(deltaTime: deltaTime)
-			
-			self.updateDeltaSnapshot = deltaTimeSnapshotNow
-		}
-	}
-	
-	func altUpdate() {
 		while self.applicationRunning {
 			while self.taskQueue.hasWork() {
 				let item = self.taskQueue.pop()
@@ -134,11 +99,11 @@ class Renderer: NSObject, MTKViewDelegate {
 			}
 			
 			let deltaTimeSnapshotNow = DispatchTime.now()
-			let deltaTime = Float(deltaTimeSnapshotNow.uptimeNanoseconds - self.altUpdateDeltaSnapshot.uptimeNanoseconds) / 1000000000.0
+			let deltaTime = Float(deltaTimeSnapshotNow.uptimeNanoseconds - self.updateDeltaSnapshot.uptimeNanoseconds) / 1000000000.0
 			
-			self.altUpdateDeltaSnapshot = deltaTimeSnapshotNow
+			self.updateDeltaSnapshot = deltaTimeSnapshotNow
 			
-			self.currentScene.altUpdate(deltaTime: deltaTime)
+			self.currentScene!.update(deltaTime: deltaTime)
 		}
 	}
 

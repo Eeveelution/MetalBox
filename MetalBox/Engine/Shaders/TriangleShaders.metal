@@ -6,6 +6,7 @@
 //
 
 #include <metal_stdlib>
+
 using namespace metal;
 
 typedef struct {
