@@ -33,11 +33,6 @@ class MainGameScene: Scene {
     override func initialize(renderer: Renderer) {
         self.renderer = renderer
         
-        var gltfLoader = GLTFLoader()
-        var test = gltfLoader.testInit(50)
-        
-        print(test)
-        
         var vertices: [VertexBufferStruct] = [];
         
         vertices.append(

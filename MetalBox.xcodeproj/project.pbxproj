@@ -8,12 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		9751865B2970766700781420 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9751865A2970766700781420 /* AppDelegate.swift */; };
-		9751865D2970766700781420 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9751865C2970766700781420 /* GameViewController.swift */; };
 		9751865F2970766700781420 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9751865E2970766700781420 /* Renderer.swift */; };
 		975186642970766800781420 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 975186632970766800781420 /* Assets.xcassets */; };
 		975186672970766800781420 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 975186652970766800781420 /* Main.storyboard */; };
 		975186702970867500781420 /* TriangleShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9751866F2970867500781420 /* TriangleShaders.metal */; };
-		9767FD23297677D900CC4E8F /* GLTFLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9767FD22297677D900CC4E8F /* GLTFLoader.m */; };
+		9767FD23297677D900CC4E8F /* GLTFModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9767FD22297677D900CC4E8F /* GLTFModel.m */; };
+		9767FD5F29768C0300CC4E8F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9751865C2970766700781420 /* GameViewController.swift */; };
+		9767FD6029768C1000CC4E8F /* base64_decode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9767FD5B297689FA00CC4E8F /* base64_decode.cpp */; };
+		9767FD6129768C1200CC4E8F /* fastgltf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9767FD5A297689FA00CC4E8F /* fastgltf.cpp */; };
+		9767FD642976904700CC4E8F /* simdjson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9767FD622976904700CC4E8F /* simdjson.cpp */; };
 		978313E82971856F0082CD5F /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978313E72971856F0082CD5F /* Scene.swift */; };
 		978313ED297185F60082CD5F /* MainGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978313EC297185F60082CD5F /* MainGameScene.swift */; };
 		978313EF29719CF90082CD5F /* TaskQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978313EE29719CF90082CD5F /* TaskQueue.swift */; };
@@ -29,8 +32,47 @@
 		975186682970766800781420 /* MetalBox.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MetalBox.entitlements; sourceTree = "<group>"; };
 		9751866F2970867500781420 /* TriangleShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = TriangleShaders.metal; sourceTree = "<group>"; };
 		9767FD21297677D800CC4E8F /* GLTFLoaderHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLTFLoaderHeader.h; sourceTree = "<group>"; };
-		9767FD22297677D900CC4E8F /* GLTFLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GLTFLoader.m; sourceTree = "<group>"; };
-		9767FD2629767F3A00CC4E8F /* GLTFLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLTFLoader.h; sourceTree = "<group>"; };
+		9767FD22297677D900CC4E8F /* GLTFModel.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = GLTFModel.m; sourceTree = "<group>"; };
+		9767FD2629767F3A00CC4E8F /* GLTFModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLTFModel.h; sourceTree = "<group>"; };
+		9767FD2A297689FA00CC4E8F /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
+		9767FD2B297689FA00CC4E8F /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		9767FD2D297689FA00CC4E8F /* add_source_directory.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = add_source_directory.cmake; sourceTree = "<group>"; };
+		9767FD2E297689FA00CC4E8F /* compiler_flags.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = compiler_flags.cmake; sourceTree = "<group>"; };
+		9767FD30297689FA00CC4E8F /* glb_tests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = glb_tests.cpp; sourceTree = "<group>"; };
+		9767FD31297689FA00CC4E8F /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		9767FD33297689FA00CC4E8F /* basic_gltf.gltf */ = {isa = PBXFileReference; lastKnownFileType = text; path = basic_gltf.gltf; sourceTree = "<group>"; };
+		9767FD34297689FA00CC4E8F /* transform_matrices.gltf */ = {isa = PBXFileReference; lastKnownFileType = text; path = transform_matrices.gltf; sourceTree = "<group>"; };
+		9767FD35297689FA00CC4E8F /* empty_json.gltf */ = {isa = PBXFileReference; lastKnownFileType = text; path = empty_json.gltf; sourceTree = "<group>"; };
+		9767FD36297689FA00CC4E8F /* base64.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = base64.txt; sourceTree = "<group>"; };
+		9767FD37297689FA00CC4E8F /* base64.txt.out */ = {isa = PBXFileReference; lastKnownFileType = file; path = base64.txt.out; sourceTree = "<group>"; };
+		9767FD38297689FA00CC4E8F /* gltf_path.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = gltf_path.hpp; sourceTree = "<group>"; };
+		9767FD39297689FA00CC4E8F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		9767FD3A297689FA00CC4E8F /* basic_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = basic_test.cpp; sourceTree = "<group>"; };
+		9767FD3B297689FA00CC4E8F /* benchmarks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = benchmarks.cpp; sourceTree = "<group>"; };
+		9767FD3C297689FA00CC4E8F /* base64_tests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = base64_tests.cpp; sourceTree = "<group>"; };
+		9767FD3D297689FA00CC4E8F /* .gitmodules */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitmodules; sourceTree = "<group>"; };
+		9767FD3E297689FA00CC4E8F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		9767FD3F297689FA00CC4E8F /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		9767FD41297689FA00CC4E8F /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		9767FD43297689FA00CC4E8F /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		9767FD44297689FA00CC4E8F /* gl_viewer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gl_viewer.cpp; sourceTree = "<group>"; };
+		9767FD45297689FA00CC4E8F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		9767FD4A297689FA00CC4E8F /* khrplatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = khrplatform.h; sourceTree = "<group>"; };
+		9767FD4C297689FA00CC4E8F /* glad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = glad.h; sourceTree = "<group>"; };
+		9767FD4D297689FA00CC4E8F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		9767FD4F297689FA00CC4E8F /* glad.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = glad.c; sourceTree = "<group>"; };
+		9767FD52297689FA00CC4E8F /* ci_x64.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = ci_x64.yml; sourceTree = "<group>"; };
+		9767FD53297689FA00CC4E8F /* ci_arm.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = ci_arm.yml; sourceTree = "<group>"; };
+		9767FD54297689FA00CC4E8F /* fetch_test_deps.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = fetch_test_deps.py; sourceTree = "<group>"; };
+		9767FD56297689FA00CC4E8F /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		9767FD57297689FA00CC4E8F /* fastgltf_util.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fastgltf_util.hpp; sourceTree = "<group>"; };
+		9767FD58297689FA00CC4E8F /* base64_decode.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = base64_decode.hpp; sourceTree = "<group>"; };
+		9767FD59297689FA00CC4E8F /* fastgltf_types.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fastgltf_types.hpp; sourceTree = "<group>"; };
+		9767FD5A297689FA00CC4E8F /* fastgltf.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = fastgltf.cpp; sourceTree = "<group>"; };
+		9767FD5B297689FA00CC4E8F /* base64_decode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = base64_decode.cpp; sourceTree = "<group>"; };
+		9767FD5C297689FA00CC4E8F /* fastgltf_parser.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fastgltf_parser.hpp; sourceTree = "<group>"; };
+		9767FD622976904700CC4E8F /* simdjson.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = simdjson.cpp; path = MetalBox/fastgltf/simdjson.cpp; sourceTree = SOURCE_ROOT; };
+		9767FD632976904700CC4E8F /* simdjson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = simdjson.h; path = MetalBox/fastgltf/simdjson.h; sourceTree = SOURCE_ROOT; };
 		978313E72971856F0082CD5F /* Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
 		978313EC297185F60082CD5F /* MainGameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainGameScene.swift; sourceTree = "<group>"; };
 		978313EE29719CF90082CD5F /* TaskQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskQueue.swift; sourceTree = "<group>"; };
@@ -66,6 +108,7 @@
 		975186592970766700781420 /* MetalBox */ = {
 			isa = PBXGroup;
 			children = (
+				9767FD29297689FA00CC4E8F /* fastgltf */,
 				978313E6297185440082CD5F /* Game */,
 				9751866E297078C900781420 /* Engine */,
 				9751865A2970766700781420 /* AppDelegate.swift */,
@@ -100,11 +143,169 @@
 		9767FD20297677B300CC4E8F /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				9767FD22297677D900CC4E8F /* GLTFLoader.m */,
+				9767FD22297677D900CC4E8F /* GLTFModel.m */,
 				9767FD21297677D800CC4E8F /* GLTFLoaderHeader.h */,
-				9767FD2629767F3A00CC4E8F /* GLTFLoader.h */,
+				9767FD2629767F3A00CC4E8F /* GLTFModel.h */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		9767FD29297689FA00CC4E8F /* fastgltf */ = {
+			isa = PBXGroup;
+			children = (
+				9767FD2A297689FA00CC4E8F /* LICENSE.md */,
+				9767FD2B297689FA00CC4E8F /* CMakeLists.txt */,
+				9767FD2C297689FA00CC4E8F /* cmake */,
+				9767FD2F297689FA00CC4E8F /* tests */,
+				9767FD3D297689FA00CC4E8F /* .gitmodules */,
+				9767FD3E297689FA00CC4E8F /* README.md */,
+				9767FD3F297689FA00CC4E8F /* .gitignore */,
+				9767FD40297689FA00CC4E8F /* examples */,
+				9767FD50297689FA00CC4E8F /* .github */,
+				9767FD54297689FA00CC4E8F /* fetch_test_deps.py */,
+				9767FD55297689FA00CC4E8F /* src */,
+			);
+			path = fastgltf;
+			sourceTree = "<group>";
+		};
+		9767FD2C297689FA00CC4E8F /* cmake */ = {
+			isa = PBXGroup;
+			children = (
+				9767FD2D297689FA00CC4E8F /* add_source_directory.cmake */,
+				9767FD2E297689FA00CC4E8F /* compiler_flags.cmake */,
+			);
+			path = cmake;
+			sourceTree = "<group>";
+		};
+		9767FD2F297689FA00CC4E8F /* tests */ = {
+			isa = PBXGroup;
+			children = (
+				9767FD30297689FA00CC4E8F /* glb_tests.cpp */,
+				9767FD31297689FA00CC4E8F /* CMakeLists.txt */,
+				9767FD32297689FA00CC4E8F /* gltf */,
+				9767FD38297689FA00CC4E8F /* gltf_path.hpp */,
+				9767FD39297689FA00CC4E8F /* README.md */,
+				9767FD3A297689FA00CC4E8F /* basic_test.cpp */,
+				9767FD3B297689FA00CC4E8F /* benchmarks.cpp */,
+				9767FD3C297689FA00CC4E8F /* base64_tests.cpp */,
+			);
+			path = tests;
+			sourceTree = "<group>";
+		};
+		9767FD32297689FA00CC4E8F /* gltf */ = {
+			isa = PBXGroup;
+			children = (
+				9767FD33297689FA00CC4E8F /* basic_gltf.gltf */,
+				9767FD34297689FA00CC4E8F /* transform_matrices.gltf */,
+				9767FD35297689FA00CC4E8F /* empty_json.gltf */,
+				9767FD36297689FA00CC4E8F /* base64.txt */,
+				9767FD37297689FA00CC4E8F /* base64.txt.out */,
+			);
+			path = gltf;
+			sourceTree = "<group>";
+		};
+		9767FD40297689FA00CC4E8F /* examples */ = {
+			isa = PBXGroup;
+			children = (
+				9767FD41297689FA00CC4E8F /* CMakeLists.txt */,
+				9767FD42297689FA00CC4E8F /* gl_viewer */,
+				9767FD46297689FA00CC4E8F /* deps */,
+			);
+			path = examples;
+			sourceTree = "<group>";
+		};
+		9767FD42297689FA00CC4E8F /* gl_viewer */ = {
+			isa = PBXGroup;
+			children = (
+				9767FD43297689FA00CC4E8F /* CMakeLists.txt */,
+				9767FD44297689FA00CC4E8F /* gl_viewer.cpp */,
+				9767FD45297689FA00CC4E8F /* README.md */,
+			);
+			path = gl_viewer;
+			sourceTree = "<group>";
+		};
+		9767FD46297689FA00CC4E8F /* deps */ = {
+			isa = PBXGroup;
+			children = (
+				9767FD47297689FA00CC4E8F /* glad */,
+			);
+			path = deps;
+			sourceTree = "<group>";
+		};
+		9767FD47297689FA00CC4E8F /* glad */ = {
+			isa = PBXGroup;
+			children = (
+				9767FD48297689FA00CC4E8F /* include */,
+				9767FD4D297689FA00CC4E8F /* README.md */,
+				9767FD4E297689FA00CC4E8F /* src */,
+			);
+			path = glad;
+			sourceTree = "<group>";
+		};
+		9767FD48297689FA00CC4E8F /* include */ = {
+			isa = PBXGroup;
+			children = (
+				9767FD49297689FA00CC4E8F /* KHR */,
+				9767FD4B297689FA00CC4E8F /* glad */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		9767FD49297689FA00CC4E8F /* KHR */ = {
+			isa = PBXGroup;
+			children = (
+				9767FD4A297689FA00CC4E8F /* khrplatform.h */,
+			);
+			path = KHR;
+			sourceTree = "<group>";
+		};
+		9767FD4B297689FA00CC4E8F /* glad */ = {
+			isa = PBXGroup;
+			children = (
+				9767FD4C297689FA00CC4E8F /* glad.h */,
+			);
+			path = glad;
+			sourceTree = "<group>";
+		};
+		9767FD4E297689FA00CC4E8F /* src */ = {
+			isa = PBXGroup;
+			children = (
+				9767FD4F297689FA00CC4E8F /* glad.c */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		9767FD50297689FA00CC4E8F /* .github */ = {
+			isa = PBXGroup;
+			children = (
+				9767FD51297689FA00CC4E8F /* workflows */,
+			);
+			path = .github;
+			sourceTree = "<group>";
+		};
+		9767FD51297689FA00CC4E8F /* workflows */ = {
+			isa = PBXGroup;
+			children = (
+				9767FD52297689FA00CC4E8F /* ci_x64.yml */,
+				9767FD53297689FA00CC4E8F /* ci_arm.yml */,
+			);
+			path = workflows;
+			sourceTree = "<group>";
+		};
+		9767FD55297689FA00CC4E8F /* src */ = {
+			isa = PBXGroup;
+			children = (
+				9767FD622976904700CC4E8F /* simdjson.cpp */,
+				9767FD632976904700CC4E8F /* simdjson.h */,
+				9767FD56297689FA00CC4E8F /* CMakeLists.txt */,
+				9767FD57297689FA00CC4E8F /* fastgltf_util.hpp */,
+				9767FD58297689FA00CC4E8F /* base64_decode.hpp */,
+				9767FD59297689FA00CC4E8F /* fastgltf_types.hpp */,
+				9767FD5A297689FA00CC4E8F /* fastgltf.cpp */,
+				9767FD5B297689FA00CC4E8F /* base64_decode.cpp */,
+				9767FD5C297689FA00CC4E8F /* fastgltf_parser.hpp */,
+			);
+			path = src;
 			sourceTree = "<group>";
 		};
 		978313E6297185440082CD5F /* Game */ = {
@@ -186,12 +387,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9751865D2970766700781420 /* GameViewController.swift in Sources */,
 				9751865F2970766700781420 /* Renderer.swift in Sources */,
 				978313E82971856F0082CD5F /* Scene.swift in Sources */,
-				9767FD23297677D900CC4E8F /* GLTFLoader.m in Sources */,
+				9767FD23297677D900CC4E8F /* GLTFModel.m in Sources */,
 				978313EF29719CF90082CD5F /* TaskQueue.swift in Sources */,
+				9767FD5F29768C0300CC4E8F /* GameViewController.swift in Sources */,
+				9767FD6029768C1000CC4E8F /* base64_decode.cpp in Sources */,
+				9767FD6129768C1200CC4E8F /* fastgltf.cpp in Sources */,
 				975186702970867500781420 /* TriangleShaders.metal in Sources */,
+				9767FD642976904700CC4E8F /* simdjson.cpp in Sources */,
 				978313ED297185F60082CD5F /* MainGameScene.swift in Sources */,
 				9751865B2970766700781420 /* AppDelegate.swift in Sources */,
 			);

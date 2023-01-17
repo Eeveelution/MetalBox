@@ -10,12 +10,11 @@
 
 #include <Foundation/Foundation.h>
 
-@interface GLTFLoader : NSObject {
-    
+@interface GLTFModel : NSObject {
+    BOOL parsedSuccessfully;
 }
 
-- (id) initWithData;
-- (int) testInit: (int)dataTest;
+- (id) initWithData: (void*)data dataSize: (int)size;
 
 @end
 
