@@ -7,10 +7,10 @@
 
 #import <Foundation/Foundation.h>
 
-#include "GLTFModel.h"
-
 #include "../../fastgltf/src/fastgltf_parser.hpp"
 #include "../../fastgltf/src/fastgltf_types.hpp"
+
+#include "GLTFModel.h"
 
 #include <iostream>
 
@@ -34,9 +34,15 @@
         self->parsedSuccessfully = true;
     }
     
+    std::unique_ptr<fastgltf::Asset> asset = gltf->getParsedAsset();
     
+    self->buffers = [NSMutableArray alloc];
     
     return self;
+}
+
+- (NSMutableArray<GLTFBuffer*>*) retrieveBuffers {
+    return self->buffers;
 }
 
 @end

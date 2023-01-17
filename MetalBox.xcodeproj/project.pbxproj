@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		971FD28B29769E6C00E2BA16 /* GLTFModel.h in Sources */ = {isa = PBXBuildFile; fileRef = 9767FD2629767F3A00CC4E8F /* GLTFModel.h */; };
 		9751865B2970766700781420 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9751865A2970766700781420 /* AppDelegate.swift */; };
 		9751865F2970766700781420 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9751865E2970766700781420 /* Renderer.swift */; };
 		975186642970766800781420 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 975186632970766800781420 /* Assets.xcassets */; };
@@ -33,7 +34,7 @@
 		9751866F2970867500781420 /* TriangleShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = TriangleShaders.metal; sourceTree = "<group>"; };
 		9767FD21297677D800CC4E8F /* GLTFLoaderHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLTFLoaderHeader.h; sourceTree = "<group>"; };
 		9767FD22297677D900CC4E8F /* GLTFModel.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = GLTFModel.m; sourceTree = "<group>"; };
-		9767FD2629767F3A00CC4E8F /* GLTFModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLTFModel.h; sourceTree = "<group>"; };
+		9767FD2629767F3A00CC4E8F /* GLTFModel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; path = GLTFModel.h; sourceTree = "<group>"; };
 		9767FD2A297689FA00CC4E8F /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		9767FD2B297689FA00CC4E8F /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		9767FD2D297689FA00CC4E8F /* add_source_directory.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = add_source_directory.cmake; sourceTree = "<group>"; };
@@ -394,6 +395,7 @@
 				9767FD5F29768C0300CC4E8F /* GameViewController.swift in Sources */,
 				9767FD6029768C1000CC4E8F /* base64_decode.cpp in Sources */,
 				9767FD6129768C1200CC4E8F /* fastgltf.cpp in Sources */,
+				971FD28B29769E6C00E2BA16 /* GLTFModel.h in Sources */,
 				975186702970867500781420 /* TriangleShaders.metal in Sources */,
 				9767FD642976904700CC4E8F /* simdjson.cpp in Sources */,
 				978313ED297185F60082CD5F /* MainGameScene.swift in Sources */,

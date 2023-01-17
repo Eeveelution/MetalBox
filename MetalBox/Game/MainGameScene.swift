@@ -33,6 +33,9 @@ class MainGameScene: Scene {
     override func initialize(renderer: Renderer) {
         self.renderer = renderer
         
+        var gltfModel = GLTFModel(data: nil, dataSize: 0)
+        var a: GLTFBuffer = gltfModel?.retrieveBuffers()[0] as! GLTFBuffer
+        
         var vertices: [VertexBufferStruct] = [];
         
         vertices.append(
