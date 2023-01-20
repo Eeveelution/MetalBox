@@ -38,6 +38,12 @@
     
     self->buffers = [NSMutableArray alloc];
     
+    for(int i = 0; i != asset->buffers.size(); i++) {
+        fastgltf::Buffer currentBuffer = asset->buffers[i];
+        GLTFBuffer* newBuffer = [GLTFBuffer alloc];
+        
+    }
+    
     return self;
 }
 

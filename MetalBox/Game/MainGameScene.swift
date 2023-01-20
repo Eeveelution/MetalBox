@@ -22,6 +22,8 @@ class MainGameScene: Scene {
     var vertexBufferDescriptor: MTLVertexDescriptor?
     var trianglePipeline: MTLRenderPipelineState?
     
+    var positionBuffer, normalBuffer, colorSpecularBuffer: MTLTexture?
+    
     override init() {
         
     }
@@ -34,7 +36,7 @@ class MainGameScene: Scene {
         self.renderer = renderer
         
         var gltfModel = GLTFModel(data: nil, dataSize: 0)
-        var a: GLTFBuffer = gltfModel?.retrieveBuffers()[0] as! GLTFBuffer
+        //var a: GLTFBuffer = gltfModel?.retrieveBuffers()[0] as! GLTFBuffer
         
         var vertices: [VertexBufferStruct] = [];
         
@@ -85,6 +87,20 @@ class MainGameScene: Scene {
         pipelineDescriptor.depthAttachmentPixelFormat = MTLPixelFormat.depth32Float
         
         self.trianglePipeline = try! renderer.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        
+        //Set up Rendertargets
+        let defferedTextureDesc = MTLTextureDescriptor()
+        defferedTextureDesc.pixelFormat = MTLPixelFormat.rgba16Float
+        defferedTextureDesc.width = Int(renderer.view.drawableSize.width)
+        defferedTextureDesc.height = Int(renderer.view.drawableSize.height)
+        defferedTextureDesc.usage = MTLTextureUsage(rawValue: (
+            MTLTextureUsage.shaderRead.rawValue |
+            MTLTextureUsage.renderTarget.rawValue
+        ))
+        
+        self.positionBuffer = renderer.device.makeTexture(descriptor: defferedTextureDesc)
+        self.normalBuffer = renderer.device.makeTexture(descriptor: defferedTextureDesc)
+        self.colorSpecularBuffer = renderer.device.makeTexture(descriptor: defferedTextureDesc)
     }
     
     override func update(deltaTime: Float) {
@@ -92,6 +108,26 @@ class MainGameScene: Scene {
     }
     
     override func render(in view: MTKView, deltaTime: Float) {
+        let geometryPassDescriptor = MTLRenderPassDescriptor()
+        
+        //Position Buffer
+        geometryPassDescriptor.colorAttachments[0].loadAction = MTLLoadAction.clear
+        geometryPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0)
+        geometryPassDescriptor.colorAttachments[0].storeAction = MTLStoreAction.store
+        geometryPassDescriptor.colorAttachments[0].texture = self.positionBuffer
+        
+        //Normal Buffer
+        geometryPassDescriptor.colorAttachments[1].loadAction = MTLLoadAction.clear
+        geometryPassDescriptor.colorAttachments[1].clearColor = MTLClearColorMake(0, 0, 0, 0)
+        geometryPassDescriptor.colorAttachments[1].storeAction = MTLStoreAction.store
+        geometryPassDescriptor.colorAttachments[1].texture = self.normalBuffer
+        
+        //Specular & Color Buffer
+        geometryPassDescriptor.colorAttachments[2].loadAction = MTLLoadAction.clear
+        geometryPassDescriptor.colorAttachments[2].clearColor = MTLClearColorMake(0, 0, 0, 0)
+        geometryPassDescriptor.colorAttachments[2].storeAction = MTLStoreAction.store
+        geometryPassDescriptor.colorAttachments[2].texture = self.colorSpecularBuffer
+                
         if let commandBuffer = self.renderer!.commandQueue.makeCommandBuffer() {
             if let renderPassDescription = view.currentRenderPassDescriptor {
                 if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescription) {
