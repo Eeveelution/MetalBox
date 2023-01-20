@@ -15,7 +15,6 @@
 		975186672970766800781420 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 975186652970766800781420 /* Main.storyboard */; };
 		975186702970867500781420 /* TriangleShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9751866F2970867500781420 /* TriangleShaders.metal */; };
 		975D3FAE297B12D00084B427 /* GLTFBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 975D3FAD297B12D00084B427 /* GLTFBuffer.m */; };
-		975D3FB1297B15720084B427 /* GLTFDataSource.h in Sources */ = {isa = PBXBuildFile; fileRef = 975D3FB0297B15720084B427 /* GLTFDataSource.h */; };
 		975D3FB3297B158B0084B427 /* GLTFDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 975D3FB2297B158B0084B427 /* GLTFDataSource.m */; };
 		9767FD23297677D900CC4E8F /* GLTFModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9767FD22297677D900CC4E8F /* GLTFModel.m */; };
 		9767FD5F29768C0300CC4E8F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9751865C2970766700781420 /* GameViewController.swift */; };
@@ -40,8 +39,8 @@
 		975D3FAC297B12730084B427 /* GLTFBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLTFBuffer.h; sourceTree = "<group>"; };
 		975D3FAD297B12D00084B427 /* GLTFBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLTFBuffer.m; sourceTree = "<group>"; };
 		975D3FAF297B13F50084B427 /* GLTFEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLTFEnums.h; sourceTree = "<group>"; };
-		975D3FB0297B15720084B427 /* GLTFDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLTFDataSource.h; sourceTree = "<group>"; };
 		975D3FB2297B158B0084B427 /* GLTFDataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GLTFDataSource.m; sourceTree = "<group>"; };
+		975D3FB4297B33E40084B427 /* GLTFDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLTFDataSource.h; sourceTree = "<group>"; };
 		9767FD21297677D800CC4E8F /* GLTFLoaderHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLTFLoaderHeader.h; sourceTree = "<group>"; };
 		9767FD22297677D900CC4E8F /* GLTFModel.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = GLTFModel.m; sourceTree = "<group>"; };
 		9767FD2629767F3A00CC4E8F /* GLTFModel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; path = GLTFModel.h; sourceTree = "<group>"; };
@@ -159,7 +158,7 @@
 				9767FD22297677D900CC4E8F /* GLTFModel.m */,
 				9767FD2629767F3A00CC4E8F /* GLTFModel.h */,
 				975D3FB2297B158B0084B427 /* GLTFDataSource.m */,
-				975D3FB0297B15720084B427 /* GLTFDataSource.h */,
+				975D3FB4297B33E40084B427 /* GLTFDataSource.h */,
 				9767FD21297677D800CC4E8F /* GLTFLoaderHeader.h */,
 				975D3FAF297B13F50084B427 /* GLTFEnums.h */,
 			);
@@ -413,7 +412,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9751865F2970766700781420 /* Renderer.swift in Sources */,
-				975D3FB1297B15720084B427 /* GLTFDataSource.h in Sources */,
 				978313E82971856F0082CD5F /* Scene.swift in Sources */,
 				975D3FB3297B158B0084B427 /* GLTFDataSource.m in Sources */,
 				9767FD23297677D900CC4E8F /* GLTFModel.m in Sources */,

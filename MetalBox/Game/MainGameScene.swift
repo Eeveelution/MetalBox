@@ -93,10 +93,7 @@ class MainGameScene: Scene {
         defferedTextureDesc.pixelFormat = MTLPixelFormat.rgba16Float
         defferedTextureDesc.width = Int(renderer.view.drawableSize.width)
         defferedTextureDesc.height = Int(renderer.view.drawableSize.height)
-        defferedTextureDesc.usage = MTLTextureUsage(rawValue: (
-            MTLTextureUsage.shaderRead.rawValue |
-            MTLTextureUsage.renderTarget.rawValue
-        ))
+        defferedTextureDesc.usage = [.shaderRead, .renderTarget]
         
         self.positionBuffer = renderer.device.makeTexture(descriptor: defferedTextureDesc)
         self.normalBuffer = renderer.device.makeTexture(descriptor: defferedTextureDesc)

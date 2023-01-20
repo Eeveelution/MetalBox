@@ -11,6 +11,7 @@
 #include "../../../fastgltf/src/fastgltf_types.hpp"
 
 #include "GLTFModel.h"
+#include "GLTFDataSource.h"
 
 #include <iostream>
 
@@ -48,6 +49,19 @@
         [cBuffer setName: @(currentBuffer.name.data()) ];
         [cBuffer setByteLength: currentBuffer.byteLength ];
         [cBuffer setDataLocation: (GLTFDataLocation)currentBuffer.location ];
+        
+        GLTFDataSource* cSource = [[GLTFDataSource alloc] init];
+        
+        [cSource setFileByteOffset: currentBuffer.data.fileByteOffset ];
+        [cSource setPath: @(currentBuffer.data.path.string().data()) ];
+        [cSource setBytes: currentBuffer.data.bytes.data()] ;
+        [cSource setBufferId: currentBuffer.data.bufferId ];
+        [cSource setMimeType: (GLTFMimeType)currentBuffer.data.mimeType ];
+        [cSource setBufferViewIndex: currentBuffer.data.bufferViewIndex ];
+
+        [cBuffer setDataSource: cSource];
+        
+        [self->buffers addObject: cBuffer];
     }
     
     return self;
