@@ -48,7 +48,7 @@ fragment PixelOut geometryPassPixelShader(PixelIn input [[stage_in]],
     half4 specularSample = specular.sample(textureSampler, input.textureCoordinates);
     
     out.colorSpecular.rgb = colorSample.rgb;
-    out.colorSpecular.a = colorSample.a;
+    out.colorSpecular.a = specularSample.a;
     
     return out;
 }

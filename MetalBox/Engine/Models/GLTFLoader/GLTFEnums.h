@@ -1,18 +1,14 @@
 //
-//  GLTFLoader.h
+//  GLTFEnums.h
 //  MetalBox
 //
-//  Created by Arkadiusz Brzoza on 17.01.23.
+//  Created by Arkadiusz Brzoza on 20.01.23.
 //
 
-#ifndef GLTFLoader_h
-#define GLTFLoader_h
+#ifndef GLTFEnums_h
+#define GLTFEnums_h
 
 #include <Foundation/Foundation.h>
-
-/* Type definitions come from here! */
-/* https://github.com/spnda/fastgltf/blob/main/src/fastgltf_types.hpp */
-/* thanks sean! */
 
 typedef enum {
     DataLocationNone = 0,
@@ -20,7 +16,7 @@ typedef enum {
     DataLocationBufferViewWithMime,
     DataLocationFilePathWithByteRange,
     DataLocationCustomBufferWithId,
-} DataLocation;
+} GLTFDataLocation;
 
 typedef enum {
     MineTypeNone = 0,
@@ -30,7 +26,7 @@ typedef enum {
     MineTypeDDS = 4,
     MineTypeGltfBuffer = 5,
     MineTypeOctetStream = 6,
-} MimeType;
+} GLTFMimeType;
 
 typedef enum {
     AccessorTypeInvalid = 0,
@@ -41,7 +37,7 @@ typedef enum {
     AccessorTypeMat2    = ( 4 << 8) | 5,
     AccessorTypeMat3    = ( 9 << 8) | 6,
     AccessorTypeMat4    = (16 << 8) | 7,
-} AccessorType;
+} GLTFAccessorType;
 
 typedef enum {
     ComponentTypeInvalid         = 0,
@@ -53,43 +49,6 @@ typedef enum {
     ComponentTypeUnsignedInt     = (32 << 16) | 5125,
     ComponentTypeFloat           = (32 << 16) | 5126,
     ComponentTypeDouble          = (64 << 16) | 5130,
-} ComponentType;
+} GLTFComponentType;
 
-@interface GLTFDataSource : NSObject {
-    unsigned long bufferViewIndex;
-    unsigned long fileByteOffset;
-    NSString* path;
-    unsigned char* bytes;
-    MimeType mimeType;
-    unsigned long long bufferId;
-}
-
-@end
-
-@interface GLTFBuffer : NSObject {
-    int byteLength;
-    DataLocation dataLocation;
-    GLTFDataSource* dataSource;
-    NSString* name;
-}
-@end
-
-@interface GLTFAccessor : NSObject {
-    unsigned long byteOffset;
-    unsigned long count;
-    AccessorType type;
-}
-
-@end
-
-@interface GLTFModel : NSObject {
-    BOOL parsedSuccessfully;
-    NSMutableArray<GLTFBuffer*>* buffers;
-}
-
-- (id) initWithData: (void*)data dataSize: (int)size;
-- (NSMutableArray<GLTFBuffer*>*) retrieveBuffers;
-
-@end
-
-#endif /* GLTFLoader_h */
+#endif /* GLTFEnums_h */

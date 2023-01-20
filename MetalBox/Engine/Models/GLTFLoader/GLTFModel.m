@@ -7,8 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
-#include "../../fastgltf/src/fastgltf_parser.hpp"
-#include "../../fastgltf/src/fastgltf_types.hpp"
+#include "../../../fastgltf/src/fastgltf_parser.hpp"
+#include "../../../fastgltf/src/fastgltf_types.hpp"
 
 #include "GLTFModel.h"
 
@@ -17,6 +17,8 @@
 @implementation GLTFModel
 
 - (id) initWithData: (void*)data dataSize: (int)size; {
+    self = [super init];
+    
     fastgltf::GltfDataBuffer buffer;
     fastgltf::Parser parser;
     
@@ -40,8 +42,12 @@
     
     for(int i = 0; i != asset->buffers.size(); i++) {
         fastgltf::Buffer currentBuffer = asset->buffers[i];
-        GLTFBuffer* newBuffer = [GLTFBuffer alloc];
         
+        GLTFBuffer* cBuffer = [[GLTFBuffer alloc] init];
+        
+        [cBuffer setName: @(currentBuffer.name.data()) ];
+        [cBuffer setByteLength: currentBuffer.byteLength ];
+        [cBuffer setDataLocation: (GLTFDataLocation)currentBuffer.location ];
     }
     
     return self;
