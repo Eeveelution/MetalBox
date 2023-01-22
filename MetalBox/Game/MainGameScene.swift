@@ -35,9 +35,6 @@ class MainGameScene: Scene {
     override func initialize(renderer: Renderer) {
         self.renderer = renderer
         
-        var gltfModel = GLTFModel(data: nil, dataSize: 0)
-        //var a: GLTFBuffer = gltfModel?.retrieveBuffers()[0] as! GLTFBuffer
-        
         var vertices: [VertexBufferStruct] = [];
         
         vertices.append(
@@ -98,6 +95,34 @@ class MainGameScene: Scene {
         self.positionBuffer = renderer.device.makeTexture(descriptor: defferedTextureDesc)
         self.normalBuffer = renderer.device.makeTexture(descriptor: defferedTextureDesc)
         self.colorSpecularBuffer = renderer.device.makeTexture(descriptor: defferedTextureDesc)
+        
+        let timeBefore = DispatchTime.now();
+        
+        let boxGltf = NSDataAsset(name: "CubeModel")!.data;
+        
+        let importFlags =
+            aiProcess_CalcTangentSpace.rawValue |
+            aiProcess_Triangulate.rawValue      |
+            aiProcess_GenNormals.rawValue       |
+            aiProcess_GenUVCoords.rawValue      |
+            aiProcess_SortByPType.rawValue      |
+            aiProcess_OptimizeMeshes.rawValue   |
+            aiProcess_JoinIdenticalVertices.rawValue;
+        
+        let pointer = UnsafeMutableRawBufferPointer.allocate(byteCount: boxGltf.count, alignment: 1);
+        boxGltf.copyBytes(to: pointer);
+        
+        let scene = aiImportFileFromMemory(pointer.baseAddress, UInt32(boxGltf.count), UInt32(importFlags), "glb")
+        if scene == nil {
+            let error = NSString(utf8String: aiGetErrorString())
+            print(error ?? "Fuck");
+        }
+        
+        let timeNow = DispatchTime.now()
+        
+        let diff = Double(timeNow.uptimeNanoseconds - timeBefore.uptimeNanoseconds) / 1000000.0;
+        
+        print("Model took \(diff)ms to load.")
     }
     
     override func update(deltaTime: Float) {
