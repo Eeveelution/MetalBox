@@ -118,6 +118,8 @@ class MainGameScene: Scene {
             print(error ?? "Fuck");
         }
         
+        let assimpMesh = AssimpMesh(node: scene!.pointee.mRootNode, scene: scene!)
+        
         let timeNow = DispatchTime.now()
         
         let diff = Double(timeNow.uptimeNanoseconds - timeBefore.uptimeNanoseconds) / 1000000.0;
