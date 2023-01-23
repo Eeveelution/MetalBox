@@ -9,18 +9,20 @@ import Foundation
 import Metal
 import MetalKit
 
-
-
 struct AssimpMeshVertex {
     let position: SIMD3<Float>
     let normal: SIMD3<Float>
     let texCoords: SIMD2<Float>
 }
 
+struct AssimpMeshTexture {
+    
+}
+
 class AssimpMesh {
     var verticies: [AssimpMeshVertex]
     var indicies: [UInt32]
-    var assimpTextures: [aiTexture]
+    var assimpTextures: [String: AssimpMeshTexture]
     
     var vertexBuffer: MTLBuffer?
     var indexBuffer: MTLBuffer?
@@ -28,7 +30,7 @@ class AssimpMesh {
     
     init(node: UnsafePointer<aiNode>, scene: UnsafePointer<aiScene>) {
         verticies = []
-        assimpTextures = []
+        assimpTextures = [:]
         textures = []
         indicies = []
         
@@ -39,7 +41,7 @@ class AssimpMesh {
         for i in 0 ..< node.pointee.mNumMeshes {
             let currentMesh = scene.pointee.mMeshes[ Int( node.pointee.mMeshes[Int(i)] ) ]
             
-            self.processMesh(mesh: currentMesh!)
+            self.processMesh(mesh: currentMesh!, scene: scene)
         }
         
         for i in 0 ..< node.pointee.mNumChildren{
@@ -47,7 +49,7 @@ class AssimpMesh {
         }
     }
     
-    private func processMesh(mesh: UnsafeMutablePointer<aiMesh>) {
+    private func processMesh(mesh: UnsafeMutablePointer<aiMesh>, scene: UnsafePointer<aiScene>) {
         for i in 0 ..< mesh.pointee.mNumVertices {
             let currentVertex = mesh.pointee.mVertices[Int(i)]
             let currentNormal = mesh.pointee.mNormals[Int(i)]
@@ -74,12 +76,37 @@ class AssimpMesh {
                 indicies.append(currentIndex)
             }
         }
+        
+        if mesh.pointee.mMaterialIndex >= 0 {
+            let material = scene.pointee.mMaterials[ Int(mesh.pointee.mMaterialIndex) ];
+            
+            let texCount = aiGetMaterialTextureCount(material, aiTextureType_DIFFUSE)
+            
+            for i in 0 ..< texCount {
+                var string: aiString = aiString();
+                var mapping: aiTextureMapping = aiTextureMapping(0);
+                var uvIndex: UInt32 = 0;
+                var blend: ai_real = 0;
+                var textureOp: aiTextureOp = aiTextureOp(0);
+                var mapMode: aiTextureMapMode = aiTextureMapMode(0);
+                var flags: UInt32 = 0;
+                
+                let textureIndex = aiGetMaterialTexture(material, aiTextureType_DIFFUSE, i, &string, &mapping, &uvIndex, &blend, &textureOp, &mapMode, &flags)
+                let texture = scene.pointee.mTextures[ Int(textureIndex.rawValue) ]
+                
+                if texture == nil {
+                    continue;
+                }
+                
+                let textureName = aiStringToString(&texture!.pointee.mFilename)
+            }
+        }
     }
     
     func createBuffersAndTextures(device: MTLDevice) {
         //TODO: maybe make a staging buffer and make data live exclusively on the GPU
+        
         self.vertexBuffer = device.makeBuffer(bytes: &self.verticies, length: MemoryLayout<AssimpMeshVertex>.stride * self.verticies.count);
         self.indexBuffer = device.makeBuffer(bytes: &self.indicies, length: MemoryLayout<UInt32>.stride * self.indicies.count);
-        
     }
 }

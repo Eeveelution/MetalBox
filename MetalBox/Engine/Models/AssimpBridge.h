@@ -11,3 +11,9 @@
 #include <assimp/types.h>
 #include <assimp/config.h>
 #include <assimp/vector2.h>
+
+#include <Foundation/Foundation.h>
+
+NSString* aiStringToString(struct aiString* str) {
+    return [[NSString alloc] initWithBytes: str->data length: str->length encoding: NSUTF8StringEncoding];
+}
