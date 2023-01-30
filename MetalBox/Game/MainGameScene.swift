@@ -21,6 +21,9 @@ class MainGameScene: Scene {
     var vertexBuffer: MTLBuffer?
     var vertexBufferDescriptor: MTLVertexDescriptor?
     var trianglePipeline: MTLRenderPipelineState?
+    var meshPipeline: MTLRenderPipelineState?
+    
+    var assimpMesh: AssimpMesh?
     
     var positionBuffer, normalBuffer, colorSpecularBuffer: MTLTexture?
     
@@ -74,6 +77,28 @@ class MainGameScene: Scene {
         
         self.vertexBufferDescriptor = vertexDescriptor
         
+        let meshVertexDescriptor = MTLVertexDescriptor()
+        
+        //Position
+        meshVertexDescriptor.attributes[0].bufferIndex = 0
+        meshVertexDescriptor.attributes[0].offset = 0
+        meshVertexDescriptor.attributes[0].format = MTLVertexFormat.float3
+        
+        //Normal
+        meshVertexDescriptor.attributes[1].bufferIndex = 0
+        meshVertexDescriptor.attributes[1].offset = MemoryLayout<SIMD3<Float>>.size
+        meshVertexDescriptor.attributes[1].format = MTLVertexFormat.float3
+        
+        //TexCoord
+        meshVertexDescriptor.attributes[2].bufferIndex = 0
+        meshVertexDescriptor.attributes[2].offset = MemoryLayout<SIMD3<Float>>.size * 2
+        meshVertexDescriptor.attributes[2].format = MTLVertexFormat.float2
+        
+        //Buffer layout
+        meshVertexDescriptor.layouts[0].stride = MemoryLayout<AssimpMeshVertex>.stride
+        meshVertexDescriptor.layouts[0].stepFunction = MTLVertexStepFunction.perVertex
+        meshVertexDescriptor.layouts[0].stepRate = 1
+        
         //Create Pipeline
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         
@@ -84,6 +109,13 @@ class MainGameScene: Scene {
         pipelineDescriptor.depthAttachmentPixelFormat = MTLPixelFormat.depth32Float
         
         self.trianglePipeline = try! renderer.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        
+        pipelineDescriptor.vertexDescriptor = meshVertexDescriptor
+        pipelineDescriptor.vertexFunction = renderer.defaultLibrary?.makeFunction(name: "assimpSimpleVertexShader")
+        pipelineDescriptor.fragmentFunction = renderer.defaultLibrary?.makeFunction(name: "assimpSimpleFragmentShader")
+        pipelineDescriptor.depthAttachmentPixelFormat = MTLPixelFormat.depth32Float
+        
+        self.meshPipeline = try! renderer.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
         
         //Set up Rendertargets
         let defferedTextureDesc = MTLTextureDescriptor()
@@ -120,7 +152,11 @@ class MainGameScene: Scene {
         
         let assimpMesh = AssimpMesh(node: scene!.pointee.mRootNode, scene: scene!)
         
+        self.assimpMesh = assimpMesh
+        
         let timeNow = DispatchTime.now()
+        
+        self.assimpMesh?.createBuffersAndTextures(device: self.renderer!.device)
         
         let diff = Double(timeNow.uptimeNanoseconds - timeBefore.uptimeNanoseconds) / 1000000.0;
         
@@ -157,12 +193,16 @@ class MainGameScene: Scene {
                 if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescription) {
                     renderEncoder.setCullMode(MTLCullMode.back)
                     renderEncoder.setFrontFacing(MTLWinding.counterClockwise)
-                    renderEncoder.setDepthStencilState(renderer!.depthStencilState)
-                    renderEncoder.setRenderPipelineState(self.trianglePipeline!)
+                    //renderEncoder.setDepthStencilState(renderer!.depthStencilState)
+                    //renderEncoder.setDepthStoreAction(MTLStoreAction.store)
+                    //renderEncoder.setRenderPipelineState(self.trianglePipeline!)
+                    renderEncoder.setRenderPipelineState(self.meshPipeline!)
                     
-                    renderEncoder.setVertexBuffer(self.vertexBuffer!, offset: 0, index: 0)
+                    //renderEncoder.setVertexBuffer(self.vertexBuffer!, offset: 0, index: 0)
+                    //renderEncoder.drawPrimitives(type: MTLPrimitiveType.triangle, vertexStart: 0, vertexCount: 3)
                     
-                    renderEncoder.drawPrimitives(type: MTLPrimitiveType.triangle, vertexStart: 0, vertexCount: 3)
+                    renderEncoder.setVertexBuffer(self.assimpMesh?.vertexBuffer, offset: 0, index: 0)
+                    renderEncoder.drawIndexedPrimitives(type: MTLPrimitiveType.triangle, indexCount: self.assimpMesh!.indicies.count, indexType: MTLIndexType.uint32, indexBuffer: self.assimpMesh!.indexBuffer!, indexBufferOffset: 0)
                     
                     renderEncoder.endEncoding()
                     

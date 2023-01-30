@@ -16,7 +16,15 @@ struct AssimpMeshVertex {
 }
 
 struct AssimpMeshTexture {
+    let filename: String
+    let textureMapping: aiTextureMapping
+    let uvIndex: UInt32
+    let blend: Float
+    let textureOperation: aiTextureOp
+    let textureMapMode: aiTextureMapMode
+    let flags: UInt32
     
+    let assimpTexture: aiTexture
 }
 
 class AssimpMesh {
@@ -99,6 +107,18 @@ class AssimpMesh {
                 }
                 
                 let textureName = aiStringToString(&texture!.pointee.mFilename)
+                
+                self.assimpTextures[textureName!] =
+                    AssimpMeshTexture(
+                        filename: textureName!,
+                        textureMapping: mapping,
+                        uvIndex: uvIndex,
+                        blend: blend,
+                        textureOperation: textureOp,
+                        textureMapMode: mapMode,
+                        flags: flags,
+                        assimpTexture: texture!.pointee
+                    )
             }
         }
     }
@@ -108,5 +128,34 @@ class AssimpMesh {
         
         self.vertexBuffer = device.makeBuffer(bytes: &self.verticies, length: MemoryLayout<AssimpMeshVertex>.stride * self.verticies.count);
         self.indexBuffer = device.makeBuffer(bytes: &self.indicies, length: MemoryLayout<UInt32>.stride * self.indicies.count);
+        
+        for (_, value) in self.assimpTextures {
+            var currentTexture = value.assimpTexture.pcData
+            let textureDescriptor = MTLTextureDescriptor()
+            
+            textureDescriptor.width = Int(value.assimpTexture.mWidth)
+            textureDescriptor.height = Int(value.assimpTexture.mHeight)
+            textureDescriptor.usage = [.shaderRead]
+            textureDescriptor.pixelFormat = MTLPixelFormat.bgra8Unorm
+            
+            let deviceTexture = device.makeTexture(descriptor: textureDescriptor)
+            
+            if deviceTexture == nil {
+                return
+            }
+            
+            deviceTexture!.replace(
+                region:
+                    MTLRegionMake3D(0, 0, 0,
+                                    textureDescriptor.width,
+                                    textureDescriptor.height,
+                                    1),
+                mipmapLevel: 0,
+                withBytes: &currentTexture,
+                bytesPerRow: 4 * textureDescriptor.width
+            )
+            
+            self.textures!.append(deviceTexture!)
+        }
     }
 }

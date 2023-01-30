@@ -15,6 +15,7 @@
 		975186702970867500781420 /* TriangleShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9751866F2970867500781420 /* TriangleShaders.metal */; };
 		9767FD5F29768C0300CC4E8F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9751865C2970766700781420 /* GameViewController.swift */; };
 		9772F6F6297E81D100416889 /* AssimpMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9772F6F5297E81D000416889 /* AssimpMesh.swift */; };
+		9772F6F8297EBE6800416889 /* AssimpSimpleShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 9772F6F7297EBE6800416889 /* AssimpSimpleShader.metal */; };
 		977D7FED297D579100999D61 /* libassimp.5.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 977D7FEB297D561C00999D61 /* libassimp.5.2.5.dylib */; };
 		978313E82971856F0082CD5F /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978313E72971856F0082CD5F /* Scene.swift */; };
 		978313ED297185F60082CD5F /* MainGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978313EC297185F60082CD5F /* MainGameScene.swift */; };
@@ -32,6 +33,7 @@
 		975186682970766800781420 /* MetalBox.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MetalBox.entitlements; sourceTree = "<group>"; };
 		9751866F2970867500781420 /* TriangleShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = TriangleShaders.metal; sourceTree = "<group>"; };
 		9772F6F5297E81D000416889 /* AssimpMesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssimpMesh.swift; sourceTree = "<group>"; };
+		9772F6F7297EBE6800416889 /* AssimpSimpleShader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = AssimpSimpleShader.metal; sourceTree = "<group>"; };
 		977D7FE9297D53B700999D61 /* AssimpBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AssimpBridge.h; sourceTree = "<group>"; };
 		977D7FEB297D561C00999D61 /* libassimp.5.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.5.2.5.dylib; path = assimp/bin/libassimp.5.2.5.dylib; sourceTree = "<group>"; };
 		978313E72971856F0082CD5F /* Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 			children = (
 				9772F6F5297E81D000416889 /* AssimpMesh.swift */,
 				977D7FE9297D53B700999D61 /* AssimpBridge.h */,
+				9772F6F7297EBE6800416889 /* AssimpSimpleShader.metal */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -205,6 +208,7 @@
 			files = (
 				9751865F2970766700781420 /* Renderer.swift in Sources */,
 				978313E82971856F0082CD5F /* Scene.swift in Sources */,
+				9772F6F8297EBE6800416889 /* AssimpSimpleShader.metal in Sources */,
 				978313EF29719CF90082CD5F /* TaskQueue.swift in Sources */,
 				9772F6F6297E81D100416889 /* AssimpMesh.swift in Sources */,
 				9767FD5F29768C0300CC4E8F /* GameViewController.swift in Sources */,
