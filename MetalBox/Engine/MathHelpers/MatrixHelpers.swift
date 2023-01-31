@@ -50,4 +50,35 @@ class MatrixHelpers {
         
         return matrix
     }
+    
+    class func createRotationY(radians: Float) -> simd_float4x4 {
+        let c = cos(radians)
+        let s = sin(radians)
+        
+        return simd_float4x4(
+            SIMD4<Float>(arrayLiteral: c,  0, -s,  0),
+            SIMD4<Float>(arrayLiteral: 0,  1,  0,  0),
+            SIMD4<Float>(arrayLiteral: s,  0,  c,  0),
+            SIMD4<Float>(arrayLiteral: 0,  0,  0,  0)
+        )
+    }
+    
+    class func createLookAt(cameraPosition: SIMD4<Float>, cameraTarget: SIMD4<Float>, cameraUp: SIMD4<Float>) -> simd_float4x4 {
+        let camPosVec3 = SIMD3<Float>(x: cameraPosition.x, y: cameraPosition.y, z: cameraPosition.z);
+        let camTargetVec3 = SIMD3<Float>(x: cameraTarget.x, y: cameraTarget.y, z: cameraTarget.z);
+        let camUpVec3 = SIMD3<Float>(x: cameraUp.x, y: cameraUp.y, z: cameraUp.z);
+        
+        let zAxis = VectorHelpers.normalize(vec3: camPosVec3 - camTargetVec3)
+        let xAxis = VectorHelpers.normalize(vec3: VectorHelpers.cross(vec1: camUpVec3, vec2: zAxis))
+        let yAxis = VectorHelpers.cross(vec1: zAxis, vec2: xAxis)
+        
+        return simd_float4x4(
+            SIMD4<Float>(arrayLiteral: xAxis.x, yAxis.x, zAxis.x, 0.0),
+            SIMD4<Float>(arrayLiteral: xAxis.y, yAxis.y, zAxis.y, 0.0),
+            SIMD4<Float>(arrayLiteral: xAxis.z, yAxis.z, zAxis.z, 0.0),
+            SIMD4<Float>(arrayLiteral: -VectorHelpers.dot(vec1: xAxis, vec2: camPosVec3),
+                                       -VectorHelpers.dot(vec1: yAxis, vec2: camPosVec3),
+                                       -VectorHelpers.dot(vec1: zAxis, vec2: camPosVec3), 1.0)
+        )
+    }
 }

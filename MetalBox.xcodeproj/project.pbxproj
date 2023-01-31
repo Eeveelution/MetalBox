@@ -22,6 +22,7 @@
 		978313E82971856F0082CD5F /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978313E72971856F0082CD5F /* Scene.swift */; };
 		978313ED297185F60082CD5F /* MainGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978313EC297185F60082CD5F /* MainGameScene.swift */; };
 		978313EF29719CF90082CD5F /* TaskQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978313EE29719CF90082CD5F /* TaskQueue.swift */; };
+		97F77B3F2987EF3B00938F4A /* VectorHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97F77B3E2987EF3B00938F4A /* VectorHelpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 		978313E72971856F0082CD5F /* Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
 		978313EC297185F60082CD5F /* MainGameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainGameScene.swift; sourceTree = "<group>"; };
 		978313EE29719CF90082CD5F /* TaskQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskQueue.swift; sourceTree = "<group>"; };
+		97F77B3E2987EF3B00938F4A /* VectorHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VectorHelpers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +63,7 @@
 			isa = PBXGroup;
 			children = (
 				973F64FB2987DABC00C6A009 /* MatrixHelpers.swift */,
+				97F77B3E2987EF3B00938F4A /* VectorHelpers.swift */,
 			);
 			path = MathHelpers;
 			sourceTree = "<group>";
@@ -232,6 +235,7 @@
 				97005D25297AB63200A2678F /* DefferedShaders.metal in Sources */,
 				973F64FC2987DABC00C6A009 /* MatrixHelpers.swift in Sources */,
 				9751865B2970766700781420 /* AppDelegate.swift in Sources */,
+				97F77B3F2987EF3B00938F4A /* VectorHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

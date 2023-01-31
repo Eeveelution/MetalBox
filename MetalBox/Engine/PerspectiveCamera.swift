@@ -13,7 +13,7 @@ import simd
 class PerspectiveCamera {
     var fieldOfView: Float;
     
-    var position: SIMD3<Float>
+    var position: SIMD4<Float>
     var pitch: Float;
     var yaw: Float;
     
@@ -22,17 +22,10 @@ class PerspectiveCamera {
     
     var viewMatrix: simd_float4x4
     
-    let defaultForward: SIMD3<Float> = SIMD3<Float>(0,  0,  1)
-    let defaultRight:   SIMD3<Float> = SIMD3<Float>(1,  0,  0)
-    let camRight:       SIMD3<Float> = SIMD3<Float>(1,  0,  0)
-    let camForward:     SIMD3<Float> = SIMD3<Float>(0,  0,  1)
-    let camUp:          SIMD3<Float> = SIMD3<Float>(0,  1,  0)
-    let camDown:        SIMD3<Float> = SIMD3<Float>(0, -1,  0)
-    
     init(fieldOfView: Float) {
         self.fieldOfView = fieldOfView
         
-        self.position = SIMD3<Float>(1, 1, 1);
+        self.position = SIMD4<Float>(1, 1, 1, 1);
         self.pitch = 0;
         self.yaw = 0;
         
@@ -42,17 +35,52 @@ class PerspectiveCamera {
         self.viewMatrix = simd_float4x4()
     }
     
-    func moveTo(_ position: SIMD3<Float>) {
+    func moveTo(_ position: SIMD4<Float>) {
         self.position = position
     }
     
-    func moveBy(_ offset: SIMD3<Float>) {
+    func moveBy(_ offset: SIMD4<Float>) {
         self.position += position;
     }
     
     func update() {
-        var camRotationMatrix: simd_float4x4;
+        let defaultForward: SIMD4<Float> = SIMD4<Float>(0,  0,  1,  0)
+        let defaultRight:   SIMD4<Float> = SIMD4<Float>(1,  0,  0,  0)
+        var camRight:       SIMD4<Float> = SIMD4<Float>(1,  0,  0,  0)
+        var camForward:     SIMD4<Float> = SIMD4<Float>(0,  0,  1,  0)
+        var camUp:          SIMD4<Float> = SIMD4<Float>(0,  1,  0,  0)
+        let camDown:        SIMD4<Float> = SIMD4<Float>(0, -1,  0,  0)
         
+        var camTarget: SIMD3<Float> = SIMD3<Float>();
+        let camRotationMatrix: simd_float4x4 = MatrixHelpers.createYawPitchRoll(yaw: self.yaw, pitch: self.pitch, roll: 0);
         
+        let transformedTarget = defaultForward * camRotationMatrix
+        
+        camTarget.x = transformedTarget.x
+        camTarget.y = transformedTarget.y
+        camTarget.z = transformedTarget.z
+        
+        camTarget = VectorHelpers.normalize(vec3: camTarget)
+        
+        let tempYTempMatrix = MatrixHelpers.createRotationY(radians: self.yaw)
+        
+        camRight = defaultRight * tempYTempMatrix
+        camUp = camUp * tempYTempMatrix
+        camForward = camForward * tempYTempMatrix
+        
+        self.position += self.moveLeftRight * camRight
+        self.position += self.moveBackForward * camForward
+        self.position += self.moveBackForward * camDown * self.pitch
+        
+        self.moveLeftRight = 0
+        self.moveBackForward = 0
+        
+        let addedCamTarget = self.position + SIMD4<Float>(camTarget, 1.0)
+        
+        camTarget.x = addedCamTarget.x
+        camTarget.y = addedCamTarget.y
+        camTarget.z = addedCamTarget.z
+        
+        self.viewMatrix = MatrixHelpers.createLookAt(cameraPosition: self.position, cameraTarget: SIMD4<Float>(camTarget, 1.0), cameraUp: camUp)
     }
 }
