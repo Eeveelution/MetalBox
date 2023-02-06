@@ -23,10 +23,15 @@ typedef struct {
     half4 color [[color(0)]];
 } FragmentOut;
 
-vertex VertexOutput assimpSimpleVertexShader(VertexInput input [[stage_in]]) {
+typedef struct {
+    float4x4 viewProjectionMatrix;
+} ConstantBufferData;
+
+vertex VertexOutput assimpSimpleVertexShader(VertexInput input [[stage_in]],
+                                             const device ConstantBufferData* constantBuffer [[buffer(1)]]) {
     VertexOutput out;
     
-    out.position = float4(input.position, 1);
+    out.position = constantBuffer->viewProjectionMatrix * float4(input.position, 1);
     out.textureCoordinate = input.textureCoordinate;
     
     return out;
@@ -37,7 +42,8 @@ fragment FragmentOut assimpSimpleFragmentShader(VertexOutput input [[stage_in]],
 ) {
     FragmentOut out;
     
-    out.color = half4(input.position.z, 0, 0, 1.0);
+    //out.color = half4(input.textureCoordinate.x, input.textureCoordinate.y, input.position.z, 1.0);
+    out.color = half4(1.0, 0.0, 0.0, 1.0);
     
     return out;
     

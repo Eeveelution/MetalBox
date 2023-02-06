@@ -10,16 +10,18 @@ import Metal
 import MetalKit
 import simd
 
-struct VertexBufferStruct {
-    let position: SIMD3<Float>;
-    let color: SIMD4<Float16>;
+struct ConstantBufferStruct {
+    let viewProjectionMatrix: simd_float4x4
 }
 
 class MainGameScene: Scene {
     var renderer: Renderer?
+    var perspectiveCamera: PerspectiveCamera?
+    
+    var constantBuffer: MTLBuffer?
+    var constantBufferData: ConstantBufferStruct?
     
     var meshPipeline: MTLRenderPipelineState?
-    
     var assimpMesh: AssimpMesh?
     
     var positionBuffer, normalBuffer, colorSpecularBuffer: MTLTexture?
@@ -34,6 +36,11 @@ class MainGameScene: Scene {
     
     override func initialize(renderer: Renderer) {
         self.renderer = renderer
+        self.perspectiveCamera = PerspectiveCamera(fieldOfView: 75, renderer: renderer)
+        //self.perspectiveCamera!.position = SIMD4<Float>(75, 1, -1, 1);
+        //self.perspectiveCamera!.pitch = -1.5
+        self.perspectiveCamera!.position = SIMD4<Float>(0, 0, 3, 1);
+        //self.perspectiveCamera!.pitch = -1.5
         
         let meshVertexDescriptor = MTLVertexDescriptor()
         
@@ -69,11 +76,11 @@ class MainGameScene: Scene {
         self.meshPipeline = try! renderer.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
         
         //Set up Rendertargets
-        let defferedTextureDesc = MTLTextureDescriptor()
-        defferedTextureDesc.pixelFormat = MTLPixelFormat.rgba16Float
-        defferedTextureDesc.width = Int(renderer.view.drawableSize.width)
-        defferedTextureDesc.height = Int(renderer.view.drawableSize.height)
-        defferedTextureDesc.usage = [.shaderRead, .renderTarget]
+        //let defferedTextureDesc = MTLTextureDescriptor()
+        //defferedTextureDesc.pixelFormat = MTLPixelFormat.rgba16Float
+        //defferedTextureDesc.width = Int(renderer.view.drawableSize.width)
+        //defferedTextureDesc.height = Int(renderer.view.drawableSize.height)
+        //defferedTextureDesc.usage = [.shaderRead, .renderTarget]
         
         //self.positionBuffer = renderer.device.makeTexture(descriptor: defferedTextureDesc)
         //self.normalBuffer = renderer.device.makeTexture(descriptor: defferedTextureDesc)
@@ -108,10 +115,26 @@ class MainGameScene: Scene {
         let diff = Double(timeNow.uptimeNanoseconds - timeBefore.uptimeNanoseconds) / 1000000.0;
         
         print("Model took \(diff)ms to load and create on the device.")
+        
+        //self.constantBufferData = ConstantBufferStruct(viewProjectionMatrix: self.perspectiveCamera!.viewMatrix * self.perspectiveCamera!.getProjectionMatrix())
+        self.constantBuffer = self.renderer!.device.makeBuffer(length: MemoryLayout<ConstantBufferStruct>.size)
     }
     
+    var fuck: Float = 0
+    
     override func update(deltaTime: Float) {
+        //self.renderer?.view.inputContext.
+        self.perspectiveCamera!.position = SIMD4<Float>(0, 0, 0, 1);
+        self.perspectiveCamera!.yaw = sin(fuck) * 2
+        self.perspectiveCamera!.update()
         
+        fuck += deltaTime;
+        
+        //print(fuck)
+        
+        //self.constantBufferData = ConstantBufferStruct(
+        //    viewProjectionMatrix: (self.perspectiveCamera!.viewMatrix * self.perspectiveCamera!.getProjectionMatrix())
+        //)
     }
     
     override func render(in view: MTKView, deltaTime: Float) {
@@ -134,15 +157,31 @@ class MainGameScene: Scene {
         //geometryPassDescriptor.colorAttachments[2].clearColor = MTLClearColorMake(0, 0, 0, 0)
         //geometryPassDescriptor.colorAttachments[2].storeAction = MTLStoreAction.store
         //geometryPassDescriptor.colorAttachments[2].texture = self.colorSpecularBuffer
+        
+        self.constantBuffer!
+            .contents()
+            .copyMemory(from: &self.constantBufferData, byteCount: MemoryLayout<ConstantBufferStruct>.size)
                 
         if let commandBuffer = self.renderer!.commandQueue.makeCommandBuffer() {
             if let renderPassDescription = view.currentRenderPassDescriptor {
                 if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescription) {
-                    renderEncoder.setCullMode(MTLCullMode.back)
+                    renderEncoder.setCullMode(MTLCullMode.none)
                     renderEncoder.setFrontFacing(MTLWinding.counterClockwise)
                     renderEncoder.setRenderPipelineState(self.meshPipeline!)
+                    renderEncoder.setViewport(
+                        MTLViewport(
+                            originX: 0,
+                            originY: 0,
+                            width: self.renderer!.view.drawableSize.width,
+                            height: self.renderer!.view.drawableSize.height,
+                            znear: 0.0001,
+                            zfar: 1
+                        )
+                    )
                     
                     renderEncoder.setVertexBuffer(self.assimpMesh?.vertexBuffer, offset: 0, index: 0)
+                    renderEncoder.setVertexBuffer(self.constantBuffer, offset: 0, index: 1)
+                    
                     renderEncoder.drawIndexedPrimitives(type: MTLPrimitiveType.triangle, indexCount: self.assimpMesh!.indicies.count, indexType: MTLIndexType.uint32, indexBuffer: self.assimpMesh!.indexBuffer!, indexBufferOffset: 0)
                     
                     renderEncoder.endEncoding()

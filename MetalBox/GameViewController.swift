@@ -39,4 +39,16 @@ class GameViewController: NSViewController {
 
         mtkView.delegate = renderer
     }
+    
+    override var acceptsFirstResponder: Bool {
+        return true
+    }
+    
+    override func keyDown(with theEvent: NSEvent) {
+        renderer
+    }
+    
+    override func keyUp(with theEvent: NSEvent) {
+        // do something
+    }
 }
