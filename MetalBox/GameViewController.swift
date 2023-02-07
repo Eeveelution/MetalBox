@@ -45,7 +45,7 @@ class GameViewController: NSViewController {
     }
     
     override func keyDown(with theEvent: NSEvent) {
-        renderer
+        //renderer
     }
     
     override func keyUp(with theEvent: NSEvent) {

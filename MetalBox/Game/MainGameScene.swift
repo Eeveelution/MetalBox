@@ -36,10 +36,10 @@ class MainGameScene: Scene {
     
     override func initialize(renderer: Renderer) {
         self.renderer = renderer
-        self.perspectiveCamera = PerspectiveCamera(fieldOfView: 75, renderer: renderer)
+        self.perspectiveCamera = PerspectiveCamera()
         //self.perspectiveCamera!.position = SIMD4<Float>(75, 1, -1, 1);
         //self.perspectiveCamera!.pitch = -1.5
-        self.perspectiveCamera!.position = SIMD4<Float>(0, 0, 3, 1);
+        self.perspectiveCamera!.setPosition(simd_float3(0, 0, 3));
         //self.perspectiveCamera!.pitch = -1.5
         
         let meshVertexDescriptor = MTLVertexDescriptor()
@@ -116,7 +116,7 @@ class MainGameScene: Scene {
         
         print("Model took \(diff)ms to load and create on the device.")
         
-        //self.constantBufferData = ConstantBufferStruct(viewProjectionMatrix: self.perspectiveCamera!.viewMatrix * self.perspectiveCamera!.getProjectionMatrix())
+        self.constantBufferData = ConstantBufferStruct(viewProjectionMatrix: self.perspectiveCamera!.getViewMatrix())
         self.constantBuffer = self.renderer!.device.makeBuffer(length: MemoryLayout<ConstantBufferStruct>.size)
     }
     
@@ -124,17 +124,17 @@ class MainGameScene: Scene {
     
     override func update(deltaTime: Float) {
         //self.renderer?.view.inputContext.
-        self.perspectiveCamera!.position = SIMD4<Float>(0, 0, 0, 1);
-        self.perspectiveCamera!.yaw = sin(fuck) * 2
-        self.perspectiveCamera!.update()
+        //self.perspectiveCamera!.position = SIMD4<Float>(0, 0, 0, 1);
+        //self.perspectiveCamera!.setYaw( sin(fuck) * 2 )
+        self.perspectiveCamera!.setPosition(simd_float3(-3, 1.5, -1));
         
         fuck += deltaTime;
         
         //print(fuck)
         
-        //self.constantBufferData = ConstantBufferStruct(
-        //    viewProjectionMatrix: (self.perspectiveCamera!.viewMatrix * self.perspectiveCamera!.getProjectionMatrix())
-        //)
+        self.constantBufferData = ConstantBufferStruct(
+            viewProjectionMatrix: self.perspectiveCamera!.getViewMatrix()
+        )
     }
     
     override func render(in view: MTKView, deltaTime: Float) {
