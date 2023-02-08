@@ -12,6 +12,11 @@
 #import "../../../glm/glm/glm.hpp"
 #import "../../../glm/glm/gtc/matrix_transform.hpp"
 
+#define self_position ((glm::vec3*)self->position)
+#define self_worldUp ((glm::vec3*)self->worldUp)
+#define self_front ((glm::vec3*)self->front)
+#define self_right ((glm::vec3*)self->right)
+
 @implementation PerspectiveCamera : NSObject
 
 - (PerspectiveCamera*) init {
@@ -24,9 +29,9 @@
         self->right = malloc(sizeof(glm::vec3));
         
         //How I love Objective-C and C++ interop...
-        *((glm::vec3*)self->position) = glm::vec3(0.0f, 0.0f, 0.0f);
-        *((glm::vec3*)self->worldUp) = glm::vec3(0.0f, 1.0f, 0.0f);
-        *((glm::vec3*)self->front) = glm::vec3(0.0f, 0.0f, -1.0f);
+        *self_position = glm::vec3(0.0f, 0.0f, 0.0f);
+        *self_worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+        *self_front = glm::vec3(0.0f, 0.0f, -1.0f);
         
         self->pitch = 0.0f;
         self->movementSpeed = 2.5f;
@@ -46,9 +51,9 @@
     newFront.y = sin( glm::radians(self->pitch) );
     newFront.z = sin( glm::radians(self->yaw) ) * cos( glm::radians(self->pitch) );
     
-    *((glm::vec3*)self->front)   = glm::normalize(newFront);
-    *((glm::vec3*)self->right)   = glm::normalize( glm::cross( *((glm::vec3*)self->front), *((glm::vec3*)self->worldUp) ) );
-    *((glm::vec3*)self->worldUp) = glm::normalize( glm::cross( *((glm::vec3*)self->right), *((glm::vec3*)self->front) ) );
+    *self_front   = glm::normalize(newFront);
+    *self_right   = glm::normalize( glm::cross( *self_front, *self_worldUp ) );
+    *self_worldUp = glm::normalize( glm::cross( *self_right, *self_front ) );
 }
 
 - (void) processMouseMovementWithXoffset: (float) xOffset yOffset: (float) yOffset {
@@ -73,19 +78,19 @@
     float velocity = self->movementSpeed * deltaTime;
     
     if((movementType & MovementType::Forward) == MovementType::Forward) {
-        *((glm::vec3*)self->position) += *((glm::vec3*)self->front) * velocity;
+        *self_position += *self_front * velocity;
     }
     
     if((movementType & MovementType::Backward) == MovementType::Backward) {
-        *((glm::vec3*)self->position) -= *((glm::vec3*)self->front) * velocity;
+        *self_position -= *self_front * velocity;
     }
     
     if((movementType & MovementType::Left) == MovementType::Left) {
-        *((glm::vec3*)self->position) -= *((glm::vec3*)self->right) * velocity;
+        *self_position -= *self_right * velocity;
     }
     
     if((movementType & MovementType::Right) == MovementType::Right) {
-        *((glm::vec3*)self->position) += *((glm::vec3*)self->right) * velocity;
+        *self_position += *self_right * velocity;
     }
     
     [self updateVectors];
@@ -95,7 +100,7 @@
     simd_float4x4 matrix;
     
     glm::mat4 perspective = glm::perspective(glm::radians(self->cameraFov), (1600.0f / 1200.0f), 0.1f, 1000.0f);
-    glm::mat4 lookAt = glm::lookAt(*((glm::vec3*)self->position), *((glm::vec3*)self->position) + *((glm::vec3*)self->front), *((glm::vec3*)self->worldUp));
+    glm::mat4 lookAt = glm::lookAt(*self_position, *self_position + *self_front, *self_worldUp);
     
     lookAt = perspective * lookAt;
     
@@ -105,7 +110,9 @@
 }
 
 - (void) setPosition: (simd_float3) position {
-    memcpy(self->position, &position, sizeof(simd_float3));
+    self_position->x = position.x;
+    self_position->y = position.y;
+    self_position->z = position.z;
     
     [self updateVectors];
 }
@@ -125,7 +132,9 @@
 - (simd_float3) getPosition {
     simd_float3 returnPosition;
     
-    memcpy(self->position, &returnPosition, sizeof(simd_float3));
+    returnPosition.x = self_position->x;
+    returnPosition.y = self_position->y;
+    returnPosition.z = self_position->z;
     
     return returnPosition;
 }
