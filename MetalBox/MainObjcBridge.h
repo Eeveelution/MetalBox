@@ -18,6 +18,6 @@ NSString* aiStringToString(struct aiString* str) {
     return [[NSString alloc] initWithBytes: str->data length: str->length encoding: NSUTF8StringEncoding];
 }
 
-// GLM Stuff:
-
 #include "Engine/MathHelpers/PerspectiveCamera.h"
+#include "Engine/Models/StbiImageLoader.h"
+

@@ -70,8 +70,9 @@ class MainGameScene: Scene {
         pipelineDescriptor.vertexDescriptor = meshVertexDescriptor
         pipelineDescriptor.vertexFunction = renderer.defaultLibrary?.makeFunction(name: "assimpSimpleVertexShader")
         pipelineDescriptor.fragmentFunction = renderer.defaultLibrary?.makeFunction(name: "assimpSimpleFragmentShader")
-        pipelineDescriptor.depthAttachmentPixelFormat = MTLPixelFormat.depth32Float
-        pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormat.bgra8Unorm_srgb
+        pipelineDescriptor.depthAttachmentPixelFormat = MTLPixelFormat.depth32Float_stencil8
+        pipelineDescriptor.stencilAttachmentPixelFormat = MTLPixelFormat.depth32Float_stencil8
+        pipelineDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormat.bgra8Unorm
         
         self.meshPipeline = try! renderer.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
         
@@ -91,12 +92,15 @@ class MainGameScene: Scene {
         let boxGltf = NSDataAsset(name: "CubeModel")!.data;
         
         let importFlags =
-            aiProcess_CalcTangentSpace.rawValue |
-            aiProcess_Triangulate.rawValue      |
-            aiProcess_GenNormals.rawValue       |
-            aiProcess_GenUVCoords.rawValue      |
-            aiProcess_SortByPType.rawValue      |
-            aiProcess_OptimizeMeshes.rawValue   |
+            aiProcess_CalcTangentSpace.rawValue       |
+            aiProcess_Triangulate.rawValue            |
+            aiProcess_GenNormals.rawValue             |
+            aiProcess_GenUVCoords.rawValue            |
+            aiProcess_SortByPType.rawValue            |
+            aiProcess_OptimizeMeshes.rawValue         |
+            aiProcess_PreTransformVertices.rawValue   |
+            aiProcess_MakeLeftHanded.rawValue         |
+            aiProcess_FlipUVs.rawValue                |
             aiProcess_JoinIdenticalVertices.rawValue;
         
         let pointer = UnsafeMutableRawBufferPointer.allocate(byteCount: boxGltf.count, alignment: 1);
@@ -125,8 +129,8 @@ class MainGameScene: Scene {
     override func update(deltaTime: Float) {
         //self.renderer?.view.inputContext.
         //self.perspectiveCamera!.position = SIMD4<Float>(0, 0, 0, 1);
-        //self.perspectiveCamera!.setYaw( sin(fuck) * 2 )
-        self.perspectiveCamera!.setPosition(simd_float3(-3, 1.5, -1));
+        //self.perspectiveCamera!.setYaw( fuck * 10 )
+        self.perspectiveCamera!.setPosition(simd_float3( -100,  50,  0));
         
         fuck += deltaTime;
         
@@ -164,10 +168,18 @@ class MainGameScene: Scene {
                 
         if let commandBuffer = self.renderer!.commandQueue.makeCommandBuffer() {
             if let renderPassDescription = view.currentRenderPassDescriptor {
+                renderPassDescription.depthAttachment.storeAction = MTLStoreAction.store
+                renderPassDescription.depthAttachment.loadAction = MTLLoadAction.clear
+                renderPassDescription.stencilAttachment.storeAction = MTLStoreAction.store
+                renderPassDescription.stencilAttachment.loadAction = MTLLoadAction.clear
+                
                 if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescription) {
-                    renderEncoder.setCullMode(MTLCullMode.none)
+                    renderEncoder.setCullMode(MTLCullMode.back)
                     renderEncoder.setFrontFacing(MTLWinding.counterClockwise)
+                    renderEncoder.setDepthStencilState(renderer!.depthStencilState)
+                    //renderEncoder.setDepthStoreAction(MTLStoreAction.store)
                     renderEncoder.setRenderPipelineState(self.meshPipeline!)
+        
                     renderEncoder.setViewport(
                         MTLViewport(
                             originX: 0,
@@ -181,8 +193,10 @@ class MainGameScene: Scene {
                     
                     renderEncoder.setVertexBuffer(self.assimpMesh?.vertexBuffer, offset: 0, index: 0)
                     renderEncoder.setVertexBuffer(self.constantBuffer, offset: 0, index: 1)
+                    renderEncoder.setFragmentTexture(self.assimpMesh?.textures?.first, index: 0)
                     
                     renderEncoder.drawIndexedPrimitives(type: MTLPrimitiveType.triangle, indexCount: self.assimpMesh!.indicies.count, indexType: MTLIndexType.uint32, indexBuffer: self.assimpMesh!.indexBuffer!, indexBufferOffset: 0)
+                    //renderEncoder.drawIndexedPrimitives(type: MTLPrimitiveType.triangle, indexCount: self.assimpMesh!.indicies.count, indexType: MTLIndexType.uint32, indexBuffer: self.assimpMesh!.indexBuffer!, indexBufferOffset: 0)
                     
                     renderEncoder.endEncoding()
                     

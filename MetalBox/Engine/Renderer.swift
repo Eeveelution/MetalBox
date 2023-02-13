@@ -48,8 +48,8 @@ class Renderer: NSObject, MTKViewDelegate {
 		self.applicationRunning = true
 		
 		//Configure Color and Depth Buffer
-		metalKitView.depthStencilPixelFormat = MTLPixelFormat.depth32Float;
-		metalKitView.colorPixelFormat = MTLPixelFormat.bgra8Unorm_srgb;
+		metalKitView.depthStencilPixelFormat = MTLPixelFormat.depth32Float_stencil8;
+		metalKitView.colorPixelFormat = MTLPixelFormat.bgra8Unorm;
 		metalKitView.sampleCount = 1;
 		
 		let depthStencilDesc = MTLDepthStencilDescriptor();

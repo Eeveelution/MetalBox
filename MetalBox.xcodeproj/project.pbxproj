@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		97005D25297AB63200A2678F /* DefferedShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 97005D24297AB63200A2678F /* DefferedShaders.metal */; };
+		974A9AF02998144F00C95972 /* stb in Resources */ = {isa = PBXBuildFile; fileRef = 974A9AEF2998144F00C95972 /* stb */; };
+		974A9AF329981B3800C95972 /* StbiImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 974A9AF229981B3800C95972 /* StbiImageLoader.m */; };
 		974E344229919A000046ECE2 /* glm in Resources */ = {isa = PBXBuildFile; fileRef = 974E344129919A000046ECE2 /* glm */; };
 		9751865B2970766700781420 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9751865A2970766700781420 /* AppDelegate.swift */; };
 		9751865F2970766700781420 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9751865E2970766700781420 /* Renderer.swift */; };
@@ -26,6 +28,9 @@
 
 /* Begin PBXFileReference section */
 		97005D24297AB63200A2678F /* DefferedShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = DefferedShaders.metal; sourceTree = "<group>"; };
+		974A9AEF2998144F00C95972 /* stb */ = {isa = PBXFileReference; lastKnownFileType = folder; path = stb; sourceTree = "<group>"; };
+		974A9AF129981ACD00C95972 /* StbiImageLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StbiImageLoader.h; sourceTree = "<group>"; };
+		974A9AF229981B3800C95972 /* StbiImageLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StbiImageLoader.m; sourceTree = "<group>"; };
 		974E344129919A000046ECE2 /* glm */ = {isa = PBXFileReference; lastKnownFileType = folder; path = glm; sourceTree = "<group>"; };
 		974E344329919A540046ECE2 /* PerspectiveCamera.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = PerspectiveCamera.h; sourceTree = "<group>"; };
 		975186572970766700781420 /* MetalBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -70,6 +75,7 @@
 		9751864E2970766700781420 = {
 			isa = PBXGroup;
 			children = (
+				974A9AEF2998144F00C95972 /* stb */,
 				974E344129919A000046ECE2 /* glm */,
 				975186592970766700781420 /* MetalBox */,
 				975186582970766700781420 /* Products */,
@@ -126,6 +132,8 @@
 			children = (
 				9772F6F5297E81D000416889 /* AssimpMesh.swift */,
 				9772F6F7297EBE6800416889 /* AssimpSimpleShader.metal */,
+				974A9AF129981ACD00C95972 /* StbiImageLoader.h */,
+				974A9AF229981B3800C95972 /* StbiImageLoader.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -210,6 +218,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				974A9AF02998144F00C95972 /* stb in Resources */,
 				974E344229919A000046ECE2 /* glm in Resources */,
 				975186642970766800781420 /* Assets.xcassets in Resources */,
 				975186672970766800781420 /* Main.storyboard in Resources */,
@@ -231,6 +240,7 @@
 				9772F6F6297E81D100416889 /* AssimpMesh.swift in Sources */,
 				9767FD5F29768C0300CC4E8F /* GameViewController.swift in Sources */,
 				975186702970867500781420 /* TriangleShaders.metal in Sources */,
+				974A9AF329981B3800C95972 /* StbiImageLoader.m in Sources */,
 				978313ED297185F60082CD5F /* MainGameScene.swift in Sources */,
 				97005D25297AB63200A2678F /* DefferedShaders.metal in Sources */,
 				9751865B2970766700781420 /* AppDelegate.swift in Sources */,

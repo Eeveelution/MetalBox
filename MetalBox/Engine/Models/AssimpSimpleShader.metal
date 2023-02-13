@@ -42,11 +42,6 @@ fragment FragmentOut assimpSimpleFragmentShader(VertexOutput input [[stage_in]],
 ) {
     FragmentOut out;
     
-    //out.color = half4(input.textureCoordinate.x, input.textureCoordinate.y, input.position.z, 1.0);
-    out.color = half4(1.0, 0.0, input.position.z, 1.0);
-    
-    return out;
-    
     constexpr sampler textureSampler(min_filter::linear, mag_filter::linear);
     
     out.color = texture.sample(textureSampler, input.textureCoordinate);

@@ -16,21 +16,17 @@ struct AssimpMeshVertex {
 }
 
 struct AssimpMeshTexture {
-    let filename: String
-    let textureMapping: aiTextureMapping
-    let uvIndex: UInt32
-    let blend: Float
-    let textureOperation: aiTextureOp
-    let textureMapMode: aiTextureMapMode
-    let flags: UInt32
-    
-    let assimpTexture: aiTexture
+    let width: UInt32
+    let height: UInt32
+    let bufferPointer: UnsafeMutablePointer<UInt8>
+    // As opposed to ARGB
+    let rgba: Bool
 }
 
 class AssimpMesh {
     var verticies: [AssimpMeshVertex]
     var indicies: [UInt32]
-    var assimpTextures: [String: AssimpMeshTexture]
+    var assimpTextures: [AssimpMeshTexture]
     
     var vertexBuffer: MTLBuffer?
     var indexBuffer: MTLBuffer?
@@ -38,7 +34,7 @@ class AssimpMesh {
     
     init(node: UnsafePointer<aiNode>, scene: UnsafePointer<aiScene>) {
         verticies = []
-        assimpTextures = [:]
+        assimpTextures = []
         textures = []
         indicies = []
         
@@ -63,9 +59,10 @@ class AssimpMesh {
             let currentNormal = mesh.pointee.mNormals[Int(i)]
             
             let aiTexCoords = mesh.pointee.mTextureCoords.0;
+            
             //let aiColors = mesh.pointee.mColors.0;
             
-            let currentTexCoords = SIMD2<Float>(aiTexCoords![Int(i)].x, aiTexCoords![Int(i)].x)
+            let currentTexCoords = SIMD2<Float>(aiTexCoords![Int(i)].x, aiTexCoords![Int(i)].y)
             
             verticies.append(
                 AssimpMeshVertex(
@@ -106,19 +103,38 @@ class AssimpMesh {
                     continue;
                 }
                 
-                let textureName = aiStringToString(&texture!.pointee.mFilename)
-                
-                self.assimpTextures[textureName!] =
-                    AssimpMeshTexture(
-                        filename: textureName!,
-                        textureMapping: mapping,
-                        uvIndex: uvIndex,
-                        blend: blend,
-                        textureOperation: textureOp,
-                        textureMapMode: mapMode,
-                        flags: flags,
-                        assimpTexture: texture!.pointee
+                if texture?.pointee.mHeight == 0 && texture?.pointee.mWidth != 0 {
+                    var width: UInt32 = 0
+                    var height: UInt32 = 0
+                    var channels: UInt32 = 0
+                    
+                    let textureData = STBIImageLoader.loadData(texture!.pointee.pcData, dataSize: texture!.pointee.mWidth, widthPtr: &width, heightPtr: &height, channelPtr: &channels, desiredChannels: 4)
+                    
+                    self.assimpTextures.append(
+                        AssimpMeshTexture(
+                            width: width,
+                            height: height,
+                            bufferPointer: textureData!,
+                            rgba: true
+                        )
                     )
+                    
+                } else {
+                    texture!.pointee.pcData.withMemoryRebound(
+                        to: UInt8.self,
+                        capacity: Int(texture!.pointee.mWidth * texture!.pointee.mHeight) * 4,
+                        {
+                            self.assimpTextures.append(
+                                AssimpMeshTexture(
+                                    width: texture!.pointee.mWidth,
+                                    height: texture!.pointee.mHeight,
+                                    bufferPointer: $0,
+                                    rgba: false
+                                )
+                            )
+                        }
+                    )
+                }
             }
         }
     }
@@ -129,14 +145,18 @@ class AssimpMesh {
         self.vertexBuffer = device.makeBuffer(bytes: &self.verticies, length: MemoryLayout<AssimpMeshVertex>.stride * self.verticies.count);
         self.indexBuffer = device.makeBuffer(bytes: &self.indicies, length: MemoryLayout<UInt32>.stride * self.indicies.count);
         
-        for (_, value) in self.assimpTextures {
-            var currentTexture = value.assimpTexture.pcData
+        for value in self.assimpTextures {
             let textureDescriptor = MTLTextureDescriptor()
             
-            textureDescriptor.width = Int(value.assimpTexture.mWidth)
-            textureDescriptor.height = Int(value.assimpTexture.mHeight)
+            textureDescriptor.width = Int(value.width)
+            textureDescriptor.height = Int(value.height)
             textureDescriptor.usage = [.shaderRead]
-            textureDescriptor.pixelFormat = MTLPixelFormat.bgra8Unorm
+            
+            if value.rgba {
+                textureDescriptor.pixelFormat = MTLPixelFormat.rgba8Unorm
+            } else {
+                textureDescriptor.pixelFormat = MTLPixelFormat.bgra8Unorm
+            }
             
             let deviceTexture = device.makeTexture(descriptor: textureDescriptor)
             
@@ -151,7 +171,7 @@ class AssimpMesh {
                                     textureDescriptor.height,
                                     1),
                 mipmapLevel: 0,
-                withBytes: &currentTexture,
+                withBytes: value.bufferPointer,
                 bytesPerRow: 4 * textureDescriptor.width
             )
             
