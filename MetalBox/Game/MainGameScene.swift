@@ -139,22 +139,36 @@ class MainGameScene: Scene {
         
         if InputManager.isKeyHeld(KeyCodes.w) {
             self.perspectiveCamera!.processKeyboardMovement(.Forward, deltaTime: deltaTime)
-            self.perspectiveCamera!.printPosition()
         }
         
         if InputManager.isKeyHeld(KeyCodes.s) {
             self.perspectiveCamera!.processKeyboardMovement(.Backward, deltaTime: deltaTime)
-            self.perspectiveCamera!.printPosition()
         }
         
         if InputManager.isKeyHeld(KeyCodes.a) {
             self.perspectiveCamera!.processKeyboardMovement(.Left, deltaTime: deltaTime)
-            self.perspectiveCamera!.printPosition()
         }
         
         if InputManager.isKeyHeld(KeyCodes.d) {
             self.perspectiveCamera!.processKeyboardMovement(.Right, deltaTime: deltaTime)
-            self.perspectiveCamera!.printPosition()
+        }
+        
+        //Temporarily view controls with kb
+        
+        if InputManager.isKeyHeld(KeyCodes.leftArrow) {
+            self.perspectiveCamera!.processMouseMovement(withXoffset: -0.005, yOffset: 0)
+        }
+        
+        if InputManager.isKeyHeld(KeyCodes.rightArrow) {
+            self.perspectiveCamera!.processMouseMovement(withXoffset: 0.005, yOffset: 0)
+        }
+        
+        if InputManager.isKeyHeld(KeyCodes.upArrow) {
+            self.perspectiveCamera!.processMouseMovement(withXoffset: 0, yOffset: 0.005)
+        }
+        
+        if InputManager.isKeyHeld(KeyCodes.downArrow) {
+            self.perspectiveCamera!.processMouseMovement(withXoffset: 0, yOffset: -0.005)
         }
     }
     

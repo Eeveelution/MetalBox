@@ -61,7 +61,7 @@
     yOffset *= self->mouseSensitivity;
     
     self->yaw += xOffset;
-    self->pitch = yOffset;
+    self->pitch += yOffset;
     
     if(self->pitch > 89.0f) {
         self->pitch = 89.0f;
