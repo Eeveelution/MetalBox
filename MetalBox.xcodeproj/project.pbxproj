@@ -24,6 +24,8 @@
 		978313ED297185F60082CD5F /* MainGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978313EC297185F60082CD5F /* MainGameScene.swift */; };
 		978313EF29719CF90082CD5F /* TaskQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978313EE29719CF90082CD5F /* TaskQueue.swift */; };
 		9786FB5429919D06009FB064 /* PerspectiveCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9786FB5329919D05009FB064 /* PerspectiveCamera.mm */; };
+		979D8B4A299A759000D17B67 /* InputManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979D8B49299A759000D17B67 /* InputManager.swift */; };
+		979D8B4D299B62EE00D17B67 /* KeyCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979D8B4C299B62EE00D17B67 /* KeyCodes.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +51,8 @@
 		978313EC297185F60082CD5F /* MainGameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainGameScene.swift; sourceTree = "<group>"; };
 		978313EE29719CF90082CD5F /* TaskQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskQueue.swift; sourceTree = "<group>"; };
 		9786FB5329919D05009FB064 /* PerspectiveCamera.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = PerspectiveCamera.mm; sourceTree = "<group>"; };
+		979D8B49299A759000D17B67 /* InputManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputManager.swift; sourceTree = "<group>"; };
+		979D8B4C299B62EE00D17B67 /* KeyCodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCodes.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +113,7 @@
 		9751866E297078C900781420 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				979D8B4B299B62DB00D17B67 /* Input */,
 				973F64FA2987DAB200C6A009 /* MathHelpers */,
 				9767FD20297677B300CC4E8F /* Models */,
 				975186712970867C00781420 /* Shaders */,
@@ -153,6 +158,15 @@
 				97005D24297AB63200A2678F /* DefferedShaders.metal */,
 			);
 			path = Game;
+			sourceTree = "<group>";
+		};
+		979D8B4B299B62DB00D17B67 /* Input */ = {
+			isa = PBXGroup;
+			children = (
+				979D8B49299A759000D17B67 /* InputManager.swift */,
+				979D8B4C299B62EE00D17B67 /* KeyCodes.swift */,
+			);
+			path = Input;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -238,7 +252,9 @@
 				9786FB5429919D06009FB064 /* PerspectiveCamera.mm in Sources */,
 				978313EF29719CF90082CD5F /* TaskQueue.swift in Sources */,
 				9772F6F6297E81D100416889 /* AssimpMesh.swift in Sources */,
+				979D8B4A299A759000D17B67 /* InputManager.swift in Sources */,
 				9767FD5F29768C0300CC4E8F /* GameViewController.swift in Sources */,
+				979D8B4D299B62EE00D17B67 /* KeyCodes.swift in Sources */,
 				975186702970867500781420 /* TriangleShaders.metal in Sources */,
 				974A9AF329981B3800C95972 /* StbiImageLoader.m in Sources */,
 				978313ED297185F60082CD5F /* MainGameScene.swift in Sources */,

@@ -38,17 +38,34 @@ class GameViewController: NSViewController {
         renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
 
         mtkView.delegate = renderer
+        
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown, handler: {
+            self.keyDown(with: $0)
+            
+            return $0
+        })
+        
+        NSEvent.addLocalMonitorForEvents(matching: .keyUp, handler: {
+            self.keyUp(with: $0)
+            
+            return $0
+        })
     }
     
     override var acceptsFirstResponder: Bool {
         return true
     }
     
+    override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        return true
+    }
+    
     override func keyDown(with theEvent: NSEvent) {
-        //renderer
+        InputManager.onKeyPressed(theEvent.keyCode)
     }
     
     override func keyUp(with theEvent: NSEvent) {
-        // do something
+        print("keyup")
+        InputManager.onKeyReleased(theEvent.keyCode)
     }
 }

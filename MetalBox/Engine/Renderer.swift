@@ -98,6 +98,22 @@ class Renderer: NSObject, MTKViewDelegate {
 				item!()
 			}
 			
+			//print("e")
+			
+			InputManager.keyLock.lock()
+			
+			for (key, value) in InputManager.keyPressed {
+				if value == true {
+					if InputManager.heldTimes[key] != nil {
+						InputManager.heldTimes[key]! += 1
+					} else {
+						InputManager.heldTimes[key] = 0
+					}
+				}
+			}
+			
+			InputManager.keyLock.unlock()
+			
 			let deltaTimeSnapshotNow = DispatchTime.now()
 			let deltaTime = Float(deltaTimeSnapshotNow.uptimeNanoseconds - self.updateDeltaSnapshot.uptimeNanoseconds) / 1000000000.0
 			

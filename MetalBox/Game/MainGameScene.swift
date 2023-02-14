@@ -139,6 +139,10 @@ class MainGameScene: Scene {
         self.constantBufferData = ConstantBufferStruct(
             viewProjectionMatrix: self.perspectiveCamera!.getViewMatrix()
         )
+        
+        if InputManager.isKeyHeld(KeyCodes.w) {
+            print("w: " + String(InputManager.heldTimes[KeyCodes.w.rawValue] ?? 0))
+        }
     }
     
     override func render(in view: MTKView, deltaTime: Float) {
