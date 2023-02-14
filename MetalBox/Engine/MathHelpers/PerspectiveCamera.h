@@ -11,12 +11,12 @@
 #import <simd/matrix.h>
 #import <simd/matrix_types.h>
 
-typedef enum {
+typedef NS_ENUM(NSInteger, MovementType) {
     Forward = 1,
     Backward = 2,
     Left = 4,
     Right = 8,
-} MovementType;
+};
 
 @interface PerspectiveCamera : NSObject {
     void* position;
@@ -48,6 +48,8 @@ typedef enum {
 - (simd_float4x4) getViewMatrix;
 
 - (void) dealloc;
+
+- (void) printPosition;
 
 @end
 

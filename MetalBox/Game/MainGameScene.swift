@@ -39,7 +39,7 @@ class MainGameScene: Scene {
         self.perspectiveCamera = PerspectiveCamera()
         //self.perspectiveCamera!.position = SIMD4<Float>(75, 1, -1, 1);
         //self.perspectiveCamera!.pitch = -1.5
-        self.perspectiveCamera!.setPosition(simd_float3(0, 0, 3));
+        self.perspectiveCamera!.setPosition(simd_float3(-100, 50, 0));
         //self.perspectiveCamera!.pitch = -1.5
         
         let meshVertexDescriptor = MTLVertexDescriptor()
@@ -127,21 +127,34 @@ class MainGameScene: Scene {
     var fuck: Float = 0
     
     override func update(deltaTime: Float) {
-        //self.renderer?.view.inputContext.
         //self.perspectiveCamera!.position = SIMD4<Float>(0, 0, 0, 1);
         //self.perspectiveCamera!.setYaw( fuck * 10 )
-        self.perspectiveCamera!.setPosition(simd_float3( -100,  50,  0));
+        ///self.perspectiveCamera!.setPosition(simd_float3( -100,  50,  0));
         
         fuck += deltaTime;
-        
-        //print(fuck)
         
         self.constantBufferData = ConstantBufferStruct(
             viewProjectionMatrix: self.perspectiveCamera!.getViewMatrix()
         )
         
         if InputManager.isKeyHeld(KeyCodes.w) {
-            print("w: " + String(InputManager.heldTimes[KeyCodes.w.rawValue] ?? 0))
+            self.perspectiveCamera!.processKeyboardMovement(.Forward, deltaTime: deltaTime)
+            self.perspectiveCamera!.printPosition()
+        }
+        
+        if InputManager.isKeyHeld(KeyCodes.s) {
+            self.perspectiveCamera!.processKeyboardMovement(.Backward, deltaTime: deltaTime)
+            self.perspectiveCamera!.printPosition()
+        }
+        
+        if InputManager.isKeyHeld(KeyCodes.a) {
+            self.perspectiveCamera!.processKeyboardMovement(.Left, deltaTime: deltaTime)
+            self.perspectiveCamera!.printPosition()
+        }
+        
+        if InputManager.isKeyHeld(KeyCodes.d) {
+            self.perspectiveCamera!.processKeyboardMovement(.Right, deltaTime: deltaTime)
+            self.perspectiveCamera!.printPosition()
         }
     }
     
@@ -181,7 +194,6 @@ class MainGameScene: Scene {
                     renderEncoder.setCullMode(MTLCullMode.back)
                     renderEncoder.setFrontFacing(MTLWinding.counterClockwise)
                     renderEncoder.setDepthStencilState(renderer!.depthStencilState)
-                    //renderEncoder.setDepthStoreAction(MTLStoreAction.store)
                     renderEncoder.setRenderPipelineState(self.meshPipeline!)
         
                     renderEncoder.setViewport(

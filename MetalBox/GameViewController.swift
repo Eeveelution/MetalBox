@@ -65,7 +65,6 @@ class GameViewController: NSViewController {
     }
     
     override func keyUp(with theEvent: NSEvent) {
-        print("keyup")
         InputManager.onKeyReleased(theEvent.keyCode)
     }
 }

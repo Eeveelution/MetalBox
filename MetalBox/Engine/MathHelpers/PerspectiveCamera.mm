@@ -34,7 +34,7 @@
         *self_front = glm::vec3(0.0f, 0.0f, -1.0f);
         
         self->pitch = 0.0f;
-        self->movementSpeed = 2.5f;
+        self->movementSpeed = 250.0f;
         self->mouseSensitivity = 0.1f;
         self->cameraFov = 75;
         
@@ -77,21 +77,27 @@
 - (void) processKeyboardMovement: (MovementType) movementType deltaTime: (float) deltaTime {
     float velocity = self->movementSpeed * deltaTime;
     
+    glm::vec3 result = *self_position;
+    
     if((movementType & MovementType::Forward) == MovementType::Forward) {
-        *self_position += *self_front * velocity;
+        result += *self_front * velocity;
     }
     
     if((movementType & MovementType::Backward) == MovementType::Backward) {
-        *self_position -= *self_front * velocity;
+        result -= *self_front * velocity;
     }
     
     if((movementType & MovementType::Left) == MovementType::Left) {
-        *self_position -= *self_right * velocity;
+        result -= *self_right * velocity;
     }
     
     if((movementType & MovementType::Right) == MovementType::Right) {
-        *self_position += *self_right * velocity;
+        result += *self_right * velocity;
     }
+    
+    self_position->x = result.x;
+    self_position->y = result.y;
+    self_position->z = result.z;
     
     [self updateVectors];
 }
@@ -151,6 +157,10 @@
     free(self->position);
     free(self->worldUp);
     free(self->front);
+}
+
+- (void) printPosition {
+    NSLog(@"%f %f %f", self_position->x, self_position->y, self_position->y);
 }
 
 @end
